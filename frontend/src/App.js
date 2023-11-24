@@ -1,26 +1,21 @@
-import logo from './logo.svg';
 import { Routes, Route, Link } from "react-router-dom";
+import Login from "../src/components/Login.js"; // 引入新的 Login 组件
+import Employee from "./components/employee/employee_home.js";
+
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path='/register' element={<></>} />
+        <Route path='/employee' element={<Employee />} />
+        <Route path='/patient' element={<></>} />
+      </Routes>
     </div>
   );
 }
 
 export default App;
+
