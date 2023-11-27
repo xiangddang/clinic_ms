@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './navbar.css';
+import '../shared/navbar.css';
 
 const Employee = () => {
   return (
@@ -11,8 +11,8 @@ const Employee = () => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto">
           <Nav.Link href="#home">Home</Nav.Link>
-          <Nav.Link href="#about">About</Nav.Link>
-          <Nav.Link href="#contact">Contact</Nav.Link>
+          <Nav.Link href="#schedule">Today's Schedule</Nav.Link>
+          <Nav.Link href="#profile">Profile</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
