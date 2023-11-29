@@ -1,6 +1,14 @@
 create database clinic;
 use clinic;
 
+-- user
+create table User (
+	username varchar(32) primary key,
+    password varchar(32) not null,
+    role enum('patient', 'employee') not null,
+    email varchar(64) not null
+);
+
 -- speciality
 create table specialty (
 	spe_id int auto_increment primary key,
@@ -65,13 +73,6 @@ create table billing(
     foreign key (patient_id) references Patient(patient_id) on delete cascade on update cascade
 );
 
--- user
-create table User (
-	username varchar(32) primary key,
-    password varchar(32) not null,
-    role enum('patient', 'employee') not null,
-    email varchar(64) not null
-);
 
 -- appointment
 create table appointments (
@@ -126,3 +127,9 @@ create table prescription (
     foreign key (medication_id) references medication(medication_id) on delete cascade on update cascade,
     foreign key (medical_records_no) references MedicalRecords(medical_records_no) on delete cascade on update cascade
 );
+
+-- insert data into User
+
+-- insert data into speciality
+
+-- insert data into 
