@@ -32,8 +32,22 @@ create table Employee (
     is_doctor bool default false,
     is_nurse bool default false,
     spe_id int,
+    username varchar(32) not null,
     foreign key (spe_id) references specialty(spe_id) on delete cascade on update cascade,
-    check (is_doctor = true and is_nurse = true)
+    foreign key (username) references User(username) on delete cascade on update cascade,
+    check (not (is_doctor = true and is_nurse = true))
+);
+
+-- doctor pair with nurse
+CREATE TABLE DoctorNursePair (
+    doctor_id INT NOT NULL,
+    nurse_id INT NOT NULL,
+    pair_time TIMESTAMP,
+    FOREIGN KEY (doctor_id) REFERENCES Employee(emp_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (nurse_id) REFERENCES Employee(emp_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (doctor_id, nurse_id),
+    UNIQUE (doctor_id),
+    UNIQUE (nurse_id)
 );
 
 -- patient
@@ -48,7 +62,9 @@ create table Patient (
     state char(2) not null,
     zipcode char(5) not null,
     emergency_name varchar(32) not null,
-    emergency_phone char(10) not null
+    emergency_phone char(10) not null,
+    username varchar(32) not null,
+    foreign key (username) references User(username) on delete cascade on update cascade
 );
 
 -- credit card
@@ -79,13 +95,11 @@ create table appointments (
 	appointment_no int auto_increment primary key,
     app_date date not null,
     app_time time not null,
-    patient_id int,
+    patient_id int default null,
     doctor_id int not null,
-    nurse_id int not null,
     -- patient_id is null means the appointment is not scheduled
     foreign key (patient_id) references Patient(patient_id) on delete cascade on update cascade,
-    foreign key (doctor_id) references Employee(emp_id) on delete cascade on update cascade,
-    foreign key (nurse_id) references Employee(emp_id) on delete cascade on update cascade
+    foreign key (doctor_id) references Employee(emp_id) on delete cascade on update cascade
 );
 
 -- medical records
@@ -123,13 +137,60 @@ create table medication (
 create table prescription (
 	medical_records_no int not null,
     medication_id int not null,
+    dosage varchar(100), -- eg. 500 mg or 2 tablets,
+    frequency varchar(50),
+    duration int, -- unit days
     primary key (medical_records_no, medication_id),
     foreign key (medication_id) references medication(medication_id) on delete cascade on update cascade,
     foreign key (medical_records_no) references MedicalRecords(medical_records_no) on delete cascade on update cascade
 );
 
--- insert data into User
+-- create appointment for one doctor for a specific day
+delimiter $$ 
 
--- insert data into speciality
+create PROCEDURE create_daily_app(doctor_id INT, app_date DATE)
+begin
+	declare time_increment int default 0;
+    
+    -- morning
+    set time_increment = 0;
+    while time_increment < 6 DO
+		INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) 
+		VALUES (app_date, ADDTIME('09:00:00', MAKETIME(time_increment DIV 2, (time_increment MOD 2) * 30, 0)), NULL, doctor_id);
+		SET time_increment = time_increment + 1;
+	END WHILE;
+	
+    -- afternoon
+	SET time_increment = 0;
+	WHILE time_increment < 7 DO
+		INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) 
+		VALUES (app_date, ADDTIME('14:00:00', MAKETIME(time_increment DIV 2, (time_increment MOD 2) * 30, 0)), NULL, doctor_id);
+		SET time_increment = time_increment + 1;
+	END WHILE;
+END$$
 
--- insert data into 
+DELIMITER ;
+
+delimiter $$
+
+create procedure create_appointment_all_doctor(in app_date date)
+begin
+	declare done int default false;
+    declare doctor_id int;
+    declare doctor_cursor cursor for select doctor_id from Employee where is_doctor = true;
+    declare continue handler for not found set done = true;
+    
+    open doctor_cursor;
+    read_loop: LOOP
+		fetch doctor_cursor into doctor_id;
+        if done then
+			leave read_loop;
+		end if;
+        
+        call create_daily_app(doctor_id, app_date);
+	end loop;
+    close doctor_cursor;
+end $$
+
+delimiter ;
+    
