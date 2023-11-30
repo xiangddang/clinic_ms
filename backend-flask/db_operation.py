@@ -55,6 +55,53 @@ class DatabaseManager:
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None
+        
+    def fetchAllPatients(self):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.execute("SELECT * FROM Patient")
+                patients = cursor.fetchall()
+            return patients
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+    
+    def fetchAllEmployees(self):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.execute("SELECT * FROM Employee")
+                employees = cursor.fetchall()
+            return employees
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+    
+    def fetchAppointmentsPatient(self, patient_id):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.execute("SELECT * FROM appointments WHERE patient_id=%s", (patient_id,))
+                appointments = cursor.fetchall()
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+    
+    def fetchAppointmentsDoctor(self, doctor_id):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.execute("SELECT * FROM appointments WHERE doctor_id=%s", (doctor_id,))
+                appointments = cursor.fetchall()
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+    
+    def fetchParterDoctor(self, nurse_id):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.execute("SELECT * FROM DoctorNursePair WHERE nurse_id=%s", (nurse_id,))
+                doctor = cursor.fetchone()
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
 
     def close_connection(self):
         # 关闭数据库连接
