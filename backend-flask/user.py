@@ -4,6 +4,7 @@ from db_operation import DatabaseManager
 db_manager = DatabaseManager()
 user_bp = Blueprint('user_bp', __name__)
 
+# login
 @user_bp.route('/login', methods=['GET'])
 def login():
     # assume the request is json
@@ -27,6 +28,8 @@ def login():
     else:
         return jsonify({'error': 'user not found'}), 404
 
+
+# register
 @user_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()

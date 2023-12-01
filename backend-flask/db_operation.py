@@ -10,7 +10,7 @@ class DatabaseManager:
         # 初始化数据库连接
         self.connection = pymysql.connect(
             host='localhost',
-            user=os.environ.get(DATABASE_USER),
+            user='root',
             password='LZUXyy2019@',
             database='clinic'
         )
