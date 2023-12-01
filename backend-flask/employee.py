@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
+from db_operation import DatabaseManager
 
+db_manager = DatabaseManager()
 employee_bp = Blueprint('employee_bp', __name__)
 
 @employee_bp.route('/employee/<employee_id>', methods=['GET'])

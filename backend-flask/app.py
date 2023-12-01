@@ -1,5 +1,9 @@
 from flask import Flask
 from user import user_bp
+from appointments import appointment_bp
+from employee import employee_bp
+from patients import patient_bp
+
 
 app = Flask(__name__)
 

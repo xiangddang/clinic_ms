@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
+from db_operation import DatabaseManager
 
+db_manager = DatabaseManager()
 user_bp = Blueprint('user_bp', __name__)
 
 @user_bp.route('/login', methods=['GET'])

@@ -10,7 +10,7 @@ class DatabaseManager:
         # 初始化数据库连接
         self.connection = pymysql.connect(
             host='localhost',
-            user='root',
+            user=os.environ.get(DATABASE_USER),
             password='LZUXyy2019@',
             database='clinic'
         )
@@ -97,8 +97,17 @@ class DatabaseManager:
     def fetchParterDoctor(self, nurse_id):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT * FROM DoctorNursePair WHERE nurse_id=%s", (nurse_id,))
+                cursor.execute("SELECT doctor_id FROM DoctorNursePair WHERE nurse_id=%s", (nurse_id,))
                 doctor = cursor.fetchone()
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+        
+    def fetchPartnerNurse(self, doctor_id):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.execute("SELECT nurse_id FROM DoctorNursePair WHERE doctor_id=%s", (doctor_id,))
+                nurse = cursor.fetchone()
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None
