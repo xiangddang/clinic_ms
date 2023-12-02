@@ -35,6 +35,16 @@ class DatabaseManager:
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return False
+    
+    def updateUser(self, username, password, role, email):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("UPDATE User SET password=%s, role=%s, email=%s WHERE username=%s", (password, role, email, username))
+            self.connection.commit()
+            return True
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return False
         
     def fetchPatient(self, patient_id):
         try:

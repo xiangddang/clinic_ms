@@ -9,3 +9,19 @@ The administrator can log in to the system through the login page using its own 
 
 #### Employee
 Work schedule: 9:00-12:00, 14:00-17:30 from Monday to Friday.
+
+
+#### APIs
+- User:
+    - Login: POST /user/login
+    - Register: POST /user/register
+    - Get user info: GET /user/info/<username>
+    - Update user info: PUT /user/update/<username>
+
+- Employee:
+
+- Appointment:
+    - Get appointment info: GET /appointment/info/<username>
+    - Add appointment: POST /appointment/add
+    - Update appointment: PUT /appointment/update/<username>
+    - Delete appointment: DELETE /appointment/delete/<username>
