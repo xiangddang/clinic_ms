@@ -27,12 +27,14 @@ create table Employee (
     city varchar(16) not null,
     state char(2) not null,
     zipcode char(5) not null,
-    start_date date,
+    start_date date not null,
+    status enum('active', 'inactive') default 'active', -- if the employee resign, mark as inactive
     is_manager bool default false,
     is_doctor bool default false,
     is_nurse bool default false,
+    biological_sex enum('male', 'female') not null,
     spe_id int,
-    username varchar(32) not null,
+    username varchar(32),
     foreign key (spe_id) references specialty(spe_id) on delete cascade on update cascade,
     foreign key (username) references User(username) on delete cascade on update cascade,
     check (not (is_doctor = true and is_nurse = true))
@@ -41,7 +43,7 @@ create table Employee (
 -- doctor pair with nurse
 CREATE TABLE DoctorNursePair (
     doctor_id INT NOT NULL,
-    nurse_id INT NOT NULL,
+    nurse_id INT default null, -- if the doctor is not paired with a nurse, then nurse_id is null
     pair_time TIMESTAMP,
     FOREIGN KEY (doctor_id) REFERENCES Employee(emp_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (nurse_id) REFERENCES Employee(emp_id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -50,20 +52,21 @@ CREATE TABLE DoctorNursePair (
     UNIQUE (nurse_id)
 );
 
--- patient
+-- patient, when patient create its account, we will automatically create a patient record for him/her so details can be filled later
 create table Patient (
 	patient_id int auto_increment primary key,
-    name varchar(32) not null,
-    date_of_birth date not null,
-    phone char(10) not null,
+    name varchar(32),
+    date_of_birth date,
+    phone char(10),
     -- address
-    street varchar(64) not null,
-    city varchar(16) not null,
-    state char(2) not null,
-    zipcode char(5) not null,
-    emergency_name varchar(32) not null,
-    emergency_phone char(10) not null,
+    street varchar(64),
+    city varchar(16),
+    state char(2),
+    zipcode char(5),
+    emergency_name varchar(32),
+    emergency_phone char(10),
     username varchar(32) not null,
+    biological_sex enum('male', 'female'),
     foreign key (username) references User(username) on delete cascade on update cascade
 );
 
@@ -157,7 +160,7 @@ begin
 end $$
 delimiter ;
 
--- create user account for patient
+-- create user account for patient, 更新一下，需要自动为patient创建一个patient record
 delimiter $$
 
 create procedure create_user_patient(IN p_username varchar(32), in p_password varchar(32), in p_email varchar(64))
@@ -167,11 +170,15 @@ end $$
 
 delimiter ;
 
+-- 根据patient id获得病人的信息
+
+-- 更改user account的信息，只能更改email和password
+
  
 DELIMITER $$
 -- create a new employee and at the same time create a new user account for this employee automatically
-
-CREATE PROCEDURE CreateEmployeeUserWithRoleAndSpecialty(
+-- 如果是医生的话，需要同时创建一个doctor-nurse pair
+CREATE PROCEDURE CreateEmployeeUser(
     IN p_name VARCHAR(64),
     IN p_date_of_birth DATE,
     IN p_phone CHAR(10),
@@ -232,9 +239,20 @@ END $$
 
 DELIMITER ;
 
+-- 根据employee id获得员工的信息
 
+-- 员工离职后将其status设置为inactive，user account删除，但是不删除medical records，appointment，prescription等记录，
+-- 删除未来的appointment，删除doctor-nurse pair
 
--- create appointment for one doctor for a specific day
+-- 根据patient id获得病人所有的appointment
+
+-- 为病人预定appointment，只有appointment的patient_id是null的时候才能预定，否则报错
+
+-- 为病人取消appointment，只有appointment的patient_id是病人的id的时候才能取消，否则报错
+
+-- 根据employee id获得员工所有的appointment
+
+-- create appointment for one doctor for a specific day，更新一下只有doctor是active的时候才能创建appointment
 delimiter $$ 
 
 create PROCEDURE create_daily_app(doctor_id INT, app_date DATE)
@@ -260,6 +278,8 @@ END$$
 
 DELIMITER ;
 
+
+-- 为所有active的doctor创建appointment
 delimiter $$
 
 create procedure create_appointment_all_doctor(in app_date date)
