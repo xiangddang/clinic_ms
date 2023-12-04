@@ -22,7 +22,7 @@ INSERT INTO specialty (spe_name, spe_discription) VALUES ('Orthopedics',
 INSERT INTO specialty (spe_name, spe_discription) VALUES ('Neurology', 
 'Deals with disorders of the nervous system including the brain and spinal cord.');
 INSERT INTO specialty (spe_name, spe_discription) VALUES ('Gynecology', 
-'Focuses on women\'s reproductive health and childbirth.');
+'Focuses on women reproductive health and childbirth.');
 INSERT INTO specialty (spe_name, spe_discription) VALUES ('Psychiatry', 
 'Specializes in the diagnosis, treatment, and prevention of mental illnesses and disorders.');
 

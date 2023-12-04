@@ -1,6 +1,4 @@
 import pymysql
-import os
-from dotenv import load_dotenv
 
 # connect to database
 import pymysql
@@ -19,17 +17,17 @@ class DatabaseManager:
         try:
         # Create a cursor and execute the SQL query
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT * FROM User WHERE username=%s", (username,))
+                cursor.callproc('get_user_by_username', (username,))
                 user = cursor.fetchone()
             return user
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None
     
-    def createUser(self, username, password, role, email):
+    def createPatientUser(self, username, password, email):
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute("INSERT INTO User (username, password, role, email) VALUES (%s, %s, %s, %s)", (username, password, role, email))
+                cursor.callproc('create_user_patient', (username, password, email))
             self.connection.commit()
             return True
         except pymysql.Error as e:

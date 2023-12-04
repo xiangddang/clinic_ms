@@ -145,6 +145,95 @@ create table prescription (
     foreign key (medical_records_no) references MedicalRecords(medical_records_no) on delete cascade on update cascade
 );
 
+
+
+-- all user defined functions below
+
+-- get user by username
+delimiter $$
+create procedure get_user_by_username(in username varchar(32))
+begin
+    select * from User where username = username;
+end $$
+delimiter ;
+
+-- create user account for patient
+delimiter $$
+
+create procedure create_user_patient(IN p_username varchar(32), in p_password varchar(32), in p_email varchar(64))
+begin
+    insert into User (username, password, role, email) values (p_username, p_password, 'patient', p_email);
+end $$
+
+delimiter ;
+
+ 
+DELIMITER $$
+-- create a new employee and at the same time create a new user account for this employee automatically
+
+CREATE PROCEDURE CreateEmployeeUserWithRoleAndSpecialty(
+    IN p_name VARCHAR(64),
+    IN p_date_of_birth DATE,
+    IN p_phone CHAR(10),
+    IN p_street VARCHAR(64),
+    IN p_city VARCHAR(16),
+    IN p_state CHAR(2),
+    IN p_zipcode CHAR(5),
+    IN p_start_date DATE,
+    IN p_role VARCHAR(32),
+    IN p_spe_name VARCHAR(32),
+    IN p_email VARCHAR(64)
+)
+BEGIN
+    DECLARE generated_username VARCHAR(32);
+    DECLARE default_password VARCHAR(32) DEFAULT 'clinic123';
+    DECLARE v_is_manager BOOL DEFAULT FALSE;
+    DECLARE v_is_doctor BOOL DEFAULT FALSE;
+    DECLARE v_is_nurse BOOL DEFAULT FALSE;
+    DECLARE v_spe_id INT;
+    DECLARE exit handler for sqlexception
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    -- generate username based on name and date of birth
+    SET generated_username = CONCAT(LEFT(p_name, 1), DATE_FORMAT(p_date_of_birth, '%Y%m%d'));
+
+    -- based on role, set corresponding boolean value
+    IF p_role = 'manager' THEN
+        SET v_is_manager = TRUE;
+    ELSEIF p_role = 'doctor' THEN
+        SET v_is_doctor = TRUE;
+    ELSEIF p_role = 'nurse' THEN
+        SET v_is_nurse = TRUE;
+    END IF;
+
+    -- find specialty id based on specialty name
+    SELECT spe_id INTO v_spe_id FROM specialty WHERE spe_name = p_spe_name;
+    IF v_spe_id IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Specialty not found';
+    END IF;
+
+    -- start transaction
+    START TRANSACTION;
+
+    -- insert user information
+    INSERT INTO User (username, password, role, email)
+    VALUES (generated_username, default_password, 'employee', p_email);
+
+    -- insert employee information
+    INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, is_manager, is_doctor, is_nurse, spe_id, username)
+    VALUES (p_name, p_date_of_birth, p_phone, p_street, p_city, p_state, p_zipcode, p_start_date, v_is_manager, v_is_doctor, v_is_nurse, v_spe_id, generated_username);
+
+    -- commit
+    COMMIT;
+END $$
+
+DELIMITER ;
+
+
+
 -- create appointment for one doctor for a specific day
 delimiter $$ 
 
