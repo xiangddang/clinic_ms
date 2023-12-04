@@ -248,6 +248,8 @@ DELIMITER ;
 
 -- 为病人预定appointment，只有appointment的patient_id是null的时候才能预定，否则报错
 
+-- 返回目前可以预定的appointment，只返回未来一周的appointment，patient id是null的appointment
+
 -- 为病人取消appointment，只有appointment的patient_id是病人的id的时候才能取消，否则报错
 
 -- 根据employee id获得员工所有的appointment
@@ -278,7 +280,6 @@ END$$
 
 DELIMITER ;
 
-
 -- 为所有active的doctor创建appointment
 delimiter $$
 
@@ -302,4 +303,22 @@ begin
 end $$
 
 delimiter ;
+
+-- manager可以管理doctor nurse pair，可以为doctor分配nurse，也可以取消doctor的nurse， 只有manager可以调这个procedure
+
+-- 返回patient的所有billing
+
+-- 给manager返回所有的一段时间的billing，可以按照时间排序
+
+-- 根据medical_records_no返回所有medical records，包括diagnosis和prescription，
+
+-- 返回所有的disease，供前端选择
+
+-- 返回所有的medication，供前端选择
+
+-- 为patient的medical records添加diagnosis，只有doctor可以调用这个procedure
+
+-- 为patient的medical records添加prescription，只有doctor可以调用这个procedure
+
+
     

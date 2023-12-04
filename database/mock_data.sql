@@ -26,7 +26,7 @@ INSERT INTO specialty (spe_name, spe_discription) VALUES ('Gynecology',
 INSERT INTO specialty (spe_name, spe_discription) VALUES ('Psychiatry', 
 'Specializes in the diagnosis, treatment, and prevention of mental illnesses and disorders.');
 
-
+-- employee table有改变，需要重新插入数据
 -- insert data into Employee
 INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, 
 is_manager, is_doctor, is_nurse, spe_id, username) VALUES 
