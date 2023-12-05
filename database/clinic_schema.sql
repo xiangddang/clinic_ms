@@ -168,7 +168,7 @@ end $$
 
 delimiter ;
 
--- 根据patient id获得病人的信息
+-- Obtaining patient information based on patient id
 delimiter //
 Create procedure get_patient_info(in patt_id int)
 begin
@@ -179,7 +179,7 @@ end;
 //
 delimiter ;
 
--- 更改user account的信息，只能更改email和password
+-- Change user account information, only email and password can be changed.
 DELIMITER //
 Create procedure edit_user_account(in username varchar(32), IN new_email VARCHAR(64), IN new_password VARCHAR(64))
 BEGIN
@@ -262,7 +262,7 @@ END $$
 DELIMITER ;
 
 -- get information of employee by employee id
-delimiter $$
+delimiter //
 
 create procedure get_employee_info(in employee_id int)
 begin
@@ -272,8 +272,8 @@ begin
 end
 delimiter ;
 
--- 员工离职后将其status设置为inactive，user account删除，但是不删除medical records，appointment，prescription等记录，
--- 删除未来的appointment，删除doctor-nurse pair
+-- employee leaves the organization with status set to inactive, user account deleted, but not medical records, appointments, prescriptions, etc...
+-- delete future appointments, delete doctor-nurse pair
 DELIMITER //
 
 CREATE PROCEDURE delete_employee(IN employee_id INT)
@@ -303,7 +303,7 @@ END //
 
 DELIMITER ;
 
--- 根据patient id获得病人所有的appointment
+-- get all info of appointments by patient id
 DELIMITER //
 
 Create PROCEDURE get_appoint_by_patId(in patt_id int)
@@ -313,7 +313,7 @@ End //
 
 DELIMITER ;
 
--- 根据employee id获得员工所有的appointment
+-- get all info of appointments by employee id
 DELIMITER //
 
 Create PROCEDURE get_appoint_by_empId(in employee_id int)
@@ -324,7 +324,7 @@ End //
 
 DELIMITER ;
 
--- 为病人预定appointment，只有appointment的patient_id是null的时候才能预定，否则报错
+-- Book an appointment for a patient, only if the patient_id of the appointment is null, otherwise an error will be reported.
 DELIMITER //
 
 CREATE PROCEDURE book_appointment(IN app_id INT, IN patt_id INT)
@@ -347,7 +347,7 @@ END //
 
 DELIMITER ;
 
--- 返回目前可以预定的appointment，只返回未来一周的appointment，patient id是null的appointment
+-- Returns appointments that are currently available for booking, only appointments for the week ahead, and appointments where the patient id is null.
 DELIMITER //
 
 CREATE PROCEDURE get_available_appointments()
@@ -361,7 +361,7 @@ END //
 
 DELIMITER ;
 
--- 为病人取消appointment，只有appointment的patient_id是病人的id的时候才能取消，否则报错
+-- Cancel an appointment for a patient, only if the patient_id of the appointment is the patient's id, otherwise an error is reported.
 DELIMITER //
 
 CREATE PROCEDURE delete_appointments(in patt_id int)
@@ -381,7 +381,7 @@ END //
 
 DELIMITER ;
 
--- create appointment for one doctor for a specific day，更新一下只有doctor是active的时候才能创建appointment
+-- create appointment for one doctor for a specific day, update that you can only create an appointment if the doctor is active
 delimiter $$ 
 
 create PROCEDURE create_daily_app(doctor_id INT, app_date DATE)
@@ -407,7 +407,7 @@ END$$
 
 DELIMITER ;
 
--- 为所有active的doctor创建appointment
+-- Create appointments for all active doctors
 delimiter $$
 
 create procedure create_appointment_all_doctor(in app_date date)
@@ -430,6 +430,3 @@ begin
 end $$
 
 delimiter ;
-
-
-    
