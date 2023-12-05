@@ -171,10 +171,34 @@ end $$
 delimiter ;
 
 -- 根据patient id获得病人的信息
+delimiter //
+Create procedure get_patient_info(in patt_id int)
+begin
+    Select name, date_of_birth, biological_sex, phone, street, city, state, zipcode
+    From Patient
+    Where patient_id = patt_id;
+end;
+//
+delimiter ;
 
 -- 更改user account的信息，只能更改email和password
+DELIMITER //
+Create procedure edit_user_account(in username varchar(32), IN new_email VARCHAR(64), IN new_password VARCHAR(64))
+BEGIN
+    -- Check if the user exists
+    IF EXISTS (SELECT 1 FROM users WHERE username = username) THEN
+        -- Update the user's email and password
+        UPDATE users
+        SET email = new_email, password = new_password
+        WHERE username = username;
+        
+        SELECT 'User account updated successfully' AS result;
+    ELSE
+        SELECT 'User not found' AS result;
+    END IF;
+END //
+DELIMITER ;
 
- 
 DELIMITER $$
 -- create a new employee and at the same time create a new user account for this employee automatically
 -- 如果是医生的话，需要同时创建一个doctor-nurse pair
@@ -242,7 +266,7 @@ DELIMITER ;
 -- get information of employee by employee id
 delimiter $$
 
-create procedure get_employee_info(in employee_id)
+create procedure get_employee_info(in employee_id int)
 begin
     select name, date_of_birth, phone, street, city, state, zipcode, biological_sex, spe_name 
     from Employee where emp_id = employee_id
