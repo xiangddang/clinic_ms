@@ -85,8 +85,8 @@ create table billing(
     amount decimal(10, 2) not null,
     status varchar(16) not null,
     created_date date not null,
-    payment_date date not null,
-    pay_card int,
+    payment_date date default null,
+    pay_card int default null,
     patient_id int not null,
     foreign key (pay_card) references credit_card(card_id) on delete cascade on update cascade,
     foreign key (patient_id) references Patient(patient_id) on delete cascade on update cascade
