@@ -4,9 +4,9 @@ from db_operation import DatabaseManager
 db_manager = DatabaseManager()
 user_bp = Blueprint('user_bp', __name__)
 
-# login
+# get info of a user, for login, assert in the frontend
 @user_bp.route('/<username>', methods=['GET'])
-def login(username):
+def get(username):
 
     # Fetch user info from database
     user = db_manager.fetchUser(username)
@@ -42,17 +42,8 @@ def register():
     else:
         return jsonify({'error': 'failed to create user'}), 500
 
-# get user info
-@user_bp.route('/info/<username>', methods=['GET'])
-def get_user(username):
-    user = db_manager.fetchUser(username)
-    if user:
-        return jsonify(user), 200
-    else:
-        return jsonify({'error': 'user not found'}), 404
-
 # update user info 还需要更新一下sql里面的procedure
-@user_bp.route('/update/<username>', methods=['PUT'])
+@user_bp.route('/<username>', methods=['PUT'])
 def update_user(username):
     data = request.get_json()
     # check if the required fields are in the request
