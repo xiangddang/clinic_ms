@@ -151,9 +151,9 @@ create table prescription (
 
 -- get user by username
 delimiter $$
-create procedure get_user_by_username(in username varchar(32))
+create procedure get_user_by_username(in p_username varchar(32))
 begin
-    select * from User where username = username;
+    select * from User where username = p_username;
 end $$
 delimiter ;
 

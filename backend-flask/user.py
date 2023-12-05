@@ -13,10 +13,10 @@ def login():
     # check if the required fields are in the request
     if 'username' not in data or 'password' not in data:
         return jsonify({'error': 'Missing username or password'}), 400
-    
-    username = request.args.get('username')
-    password = request.args.get('password')
-    
+
+    username = data.get('username')
+    password = data.get('password')
+
     # Fetch user info from database
     user = db_manager.fetchUser(username)
     
@@ -35,12 +35,11 @@ def register():
     data = request.get_json()
     
     # check if the required fields are in the request
-    if 'username' not in data or 'password' not in data or 'role' not in data or 'email' not in data:
+    if 'username' not in data or 'password' not in data or 'email' not in data:
         return jsonify({'error': 'Missing username or password or email'}), 400
 
     username = data.get('username')
     password = data.get('password')
-    role = data.get('role')
     email = data.get("email")
     
     # check if the username is already taken
@@ -49,12 +48,13 @@ def register():
         return jsonify({'error': 'username already taken'}), 400
     
     # create user
-    success = db_manager.createUser(username, password, role, email)
+    success = db_manager.createPatientUser(username, password, email)
     if success:
         return jsonify({'success': 'user created'}), 201
     else:
         return jsonify({'error': 'failed to create user'}), 500
 
+# get user info
 @user_bp.route('/info/<username>', methods=['GET'])
 def get_user(username):
     user = db_manager.fetchUser(username)
@@ -63,25 +63,25 @@ def get_user(username):
     else:
         return jsonify({'error': 'user not found'}), 404
 
+# update user info 还需要更新一下sql里面的procedure
 @user_bp.route('/update/<username>', methods=['PUT'])
 def update_user(username):
     data = request.get_json()
     # check if the required fields are in the request
-    if 'password' not in data or 'role' not in data or 'email' not in data:
+    if 'password' not in data or 'email' not in data:
         return jsonify({'error': 'Missing username or password or email'}), 400
 
     password = data.get('password')
-    role = data.get('role')
     email = data.get("email")
     
     user = db_manager.fetchUser(username)
     if not user:
         return jsonify({'error': 'user not found'}), 404
     # if no info changed, return fail
-    if user['password'] == password and user['role'] == role and user['email'] == email:
+    if user['password'] == password and user['email'] == email:
         return jsonify({'error': 'no change'}), 400
     
-    update = db_manager.updateUser(username, password, role, email)
+    update = db_manager.updateUser(username, password, email)
     if update:
         return jsonify({'success': f'user `{username}` updated'}), 200
     else:
