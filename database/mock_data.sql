@@ -32,8 +32,8 @@ is_manager, is_doctor, is_nurse, biological_sex, spe_id, username) VALUES
 ('Dr. Alice Smith', '1980-04-15', '1234567890', '123 Main St', 'Medville', 'CA', '90210', '2023-11-01', 'active', 
  False, True, False, 'female', 1, 'drsmith');
 
-INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, 
-is_manager, is_doctor, is_nurse, spe_id, username) VALUES 
+INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, status,
+is_manager, is_doctor, is_nurse, biological_sex, spe_id, username) VALUES 
 ('Nurse Bob Johnson', '1985-08-20', '2345678901', '456 Side Rd', 'Nursville', 'TX', '75001', '2023-11-01', 'active', 
  False, False, True, 'male', 1, 'nursejones');
  
@@ -65,15 +65,15 @@ INSERT INTO billing (amount, status, created_date, payment_date, pay_card, patie
 (25.00, 'unpaid', '2023-02-10', '2023-11-15', 2, 2);
 
 -- insert data into appointment by calling procedure
-call reate_appointment_all_doctor('2023-12-5');
-call reate_appointment_all_doctor('2023-12-6');
-call reate_appointment_all_doctor('2023-12-7');
-call reate_appointment_all_doctor('2023-12-8');
-call reate_appointment_all_doctor('2023-12-11');
-call reate_appointment_all_doctor('2023-12-12');
-call reate_appointment_all_doctor('2023-12-13');
-call reate_appointment_all_doctor('2023-12-14');
-call reate_appointment_all_doctor('2023-12-15');
+call create_appointment_all_doctor('2023-12-5');
+call create_appointment_all_doctor('2023-12-6');
+call create_appointment_all_doctor('2023-12-7');
+call create_appointment_all_doctor('2023-12-8');
+call create_appointment_all_doctor('2023-12-11');
+call create_appointment_all_doctor('2023-12-12');
+call create_appointment_all_doctor('2023-12-13');
+call create_appointment_all_doctor('2023-12-14');
+call create_appointment_all_doctor('2023-12-15');
 
 -- insert data into disease
 INSERT INTO disease (dis_name, dis_descirption) VALUES ('Common Cold', 
@@ -94,7 +94,7 @@ INSERT INTO disease (dis_name, dis_descirption) VALUES ('Skin Infection',
 'Skin issues caused by bacteria, fungi, or viruses, manifested as redness, itching, or rash.');
 
 -- insert data into MedicalRecords
-INSERT INTO MedicalRecords (record_date, patient_id, doctor_id, nurse_id) VALUES ('2023-01-01', 1, 1, 2);
+INSERT INTO MedicalRecords (record_date, patient_id, doctor_id) VALUES ('2023-11-15', 1, 1);
 
 -- insert data into diagnosis
 INSERT INTO diagnosis (medical_records_no, dis_id) values (1, 1);
