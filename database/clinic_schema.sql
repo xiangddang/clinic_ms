@@ -28,7 +28,7 @@ create table Employee (
     state char(2) not null,
     zipcode char(5) not null,
     start_date date not null,
-    status enum('active', 'inactive') default 'active', -- if the employee resign, mark as inactive
+    status enum('active', 'invalid') default 'active', -- if the employee resign, mark as inactive
     is_manager bool default false,
     is_doctor bool default false,
     is_nurse bool default false,
@@ -274,16 +274,112 @@ delimiter ;
 
 -- 员工离职后将其status设置为inactive，user account删除，但是不删除medical records，appointment，prescription等记录，
 -- 删除未来的appointment，删除doctor-nurse pair
+DELIMITER //
+
+CREATE PROCEDURE delete_employee(IN employee_id INT)
+BEGIN
+    DECLARE user_exists INT;
+
+    -- Check if the user account exists
+    SELECT COUNT(*) INTO user_exists FROM employee WHERE emp_id = employee_id;
+
+    IF user_exists > 0 THEN
+        -- Delete future appointments for the employee
+        DELETE FROM appointments WHERE doctor_id = employee_id AND app_date > NOW();
+
+        -- Delete doctor-nurse pairs associated with the employee
+        DELETE FROM doctor_nurse_pairs WHERE doctor_id = employee_id OR nurse_id = employee_id;
+
+        -- Delete the user account and employee record
+        DELETE u, e FROM users u
+        JOIN employee e ON u.username = e.username
+        WHERE e.emp_id = employee_id;
+
+        SELECT 'Employee deleted successfully' AS result;
+    ELSE
+        SELECT 'Employee not found' AS result;
+    END IF;
+END //
+
+DELIMITER ;
 
 -- 根据patient id获得病人所有的appointment
+DELIMITER //
 
--- 为病人预定appointment，只有appointment的patient_id是null的时候才能预定，否则报错
+Create PROCEDURE get_appoint_by_patId(in patt_id int)
+Begin
+    Select * from appointments where patient_id = patt_id;
+End //
 
--- 返回目前可以预定的appointment，只返回未来一周的appointment，patient id是null的appointment
-
--- 为病人取消appointment，只有appointment的patient_id是病人的id的时候才能取消，否则报错
+DELIMITER ;
 
 -- 根据employee id获得员工所有的appointment
+DELIMITER //
+
+Create PROCEDURE get_appoint_by_empId(in employee_id int)
+Begin
+    Select * from appointments a join DoctorNursePair dnp on a.doctor_id = dnp.id
+    where dnp.doctor_id = employee_id or dnp.nurse_id = employee_id;
+End //
+
+DELIMITER ;
+
+-- 为病人预定appointment，只有appointment的patient_id是null的时候才能预定，否则报错
+DELIMITER //
+
+CREATE PROCEDURE book_appointment(IN app_id INT, IN patt_id INT)
+BEGIN
+    DECLARE app_patient_id INT;
+
+    -- Check if the appointment exists and if it's available
+    SELECT patient_id INTO app_patient_id FROM appointments WHERE appointment_no = app_id;
+
+    IF app_patient_id IS NULL THEN
+        -- Reserve the appointment for the patient
+        UPDATE appointments SET patient_id = patt_id WHERE appointment_no = app_id;
+        SELECT 'Appointment booked successfully' AS result;
+    ELSE
+        -- Appointment is already reserved, return an error
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Appointment is already reserved', MYSQL_ERRNO = 3001;
+    END IF;
+END //
+
+DELIMITER ;
+
+-- 返回目前可以预定的appointment，只返回未来一周的appointment，patient id是null的appointment
+DELIMITER //
+
+CREATE PROCEDURE get_available_appointments()
+BEGIN
+    SELECT *
+    FROM appointments
+    WHERE patient_id IS NULL
+      AND appointment_date >= NOW()
+      AND appointment_date <= DATE_ADD(NOW(), INTERVAL 1 WEEK);
+END //
+
+DELIMITER ;
+
+-- 为病人取消appointment，只有appointment的patient_id是病人的id的时候才能取消，否则报错
+DELIMITER //
+
+CREATE PROCEDURE delete_appointments(in patt_id int)
+BEGIN
+    Declare this_patient_id int;
+    Select patient_id into this_patient_id from appointments where patient_id = patt_id;
+    If this_patient_id is not NULL THEN
+        Delete FROM appointments
+        WHERE patient_id = patt_id
+            AND appointment_date >= NOW()
+            AND appointment_date <= DATE_ADD(NOW(), INTERVAL 1 WEEK);
+    ELSE
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Wrong patient ID', MYSQL_ERRNO = 3001;
+    END IF;
+END //
+
+DELIMITER ;
 
 -- create appointment for one doctor for a specific day，更新一下只有doctor是active的时候才能创建appointment
 delimiter $$ 
