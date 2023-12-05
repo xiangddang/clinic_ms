@@ -36,13 +36,16 @@ const Patient = () => {
   return (
     <div>
       <Navbar>
-        <Navbar.Brand href="#home">X Healthcare</Navbar.Brand>
+        <Navbar.Brand href="/patient">X Healthcare</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#schedule">Book a Visit</Nav.Link>
-            <Nav.Link href="#profile">Profile</Nav.Link>
+            <Nav.Link as={Link} to="/patient">
+              Home
+            </Nav.Link>
+            <Nav.Link as={Link} to={`/patient/profile/${patientId}`}>
+              Profile
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

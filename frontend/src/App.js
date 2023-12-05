@@ -4,6 +4,7 @@ import Employee from "./components/employee/employee_home.js";
 import PatientPage from "./components/routes/patientPage.js";
 import Manager from "./components/manager/manager_home.js";
 import CheckPrescription from "./components/patient/check_prescript.js";
+import Register from "../src/components/Register.js";
 
 import './App.css';
 
@@ -11,8 +12,8 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path='/register' element={<></>} />
+        <Route path="/login" element={<Login />} />
+        <Route path='/register' element={<Register />} />
         <Route path='/employee' element={<Employee />} />
         <Route path='/patient/*' element={<PatientPage />} />
         <Route path='/manager' element={<Manager />} />

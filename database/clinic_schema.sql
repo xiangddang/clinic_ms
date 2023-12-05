@@ -173,6 +173,7 @@ end $$
 
 delimiter ;
 
+<<<<<<< HEAD
 -- update patient information
 delimiter $$
 create procedure update_patient_information(
@@ -211,6 +212,9 @@ delimiter ;
 
 
 -- get patient information by patient id
+=======
+-- Obtaining patient information based on patient id
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540
 delimiter //
 Create procedure get_patient_info(in patt_id int)
 begin
@@ -221,7 +225,11 @@ end;
 //
 delimiter ;
 
+<<<<<<< HEAD
 -- change information of user account, only change email and password
+=======
+-- Change user account information, only email and password can be changed.
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540
 DELIMITER //
 Create procedure edit_user_account(in username varchar(32), IN new_email VARCHAR(64), IN new_password VARCHAR(64))
 BEGIN
@@ -314,7 +322,7 @@ END $$
 DELIMITER ;
 
 -- get information of employee by employee id
-delimiter $$
+delimiter //
 
 create procedure get_employee_info(in employee_id int)
 begin
@@ -324,9 +332,14 @@ begin
 end
 delimiter ;
 
+<<<<<<< HEAD
 -- when employee resign, mark it as inactive and delete user account, delete all appointments in the future
 -- if the employee is doctor, delete the doctor-nurse pair
 -- if the employee is nurse, make the doctor-nurse pair nurse_id null
+=======
+-- employee leaves the organization with status set to inactive, user account deleted, but not medical records, appointments, prescriptions, etc...
+-- delete future appointments, delete doctor-nurse pair
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540
 DELIMITER //
 
 CREATE PROCEDURE delete_employee(IN employee_id INT)
@@ -373,7 +386,11 @@ END //
 
 DELIMITER ;
 
+<<<<<<< HEAD
 -- get all appointments for a patient by patient id
+=======
+-- get all info of appointments by patient id
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540
 DELIMITER //
 
 Create PROCEDURE get_appoint_by_patId(in patt_id int)
@@ -383,8 +400,12 @@ End //
 
 DELIMITER ;
 
+<<<<<<< HEAD
 -- get all appointments for a doctor or nurse by employee id
 -- if the employee is nurse, return appointments of the doctor he/she paired with
+=======
+-- get all info of appointments by employee id
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540
 DELIMITER //
 
 Create PROCEDURE get_appoint_by_empId(in employee_id int)
@@ -395,7 +416,11 @@ End //
 
 DELIMITER ;
 
+<<<<<<< HEAD
 -- schedule an appointment for a patient, only patient can call this procedure
+=======
+-- Book an appointment for a patient, only if the patient_id of the appointment is null, otherwise an error will be reported.
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540
 DELIMITER //
 
 CREATE PROCEDURE book_appointment(IN app_id INT, IN patt_id INT)
@@ -418,7 +443,11 @@ END //
 
 DELIMITER ;
 
+<<<<<<< HEAD
 -- return all available appointments in the next week, which means patient_id is null and appointment_date is in the next week
+=======
+-- Returns appointments that are currently available for booking, only appointments for the week ahead, and appointments where the patient id is null.
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540
 DELIMITER //
 
 CREATE PROCEDURE get_available_appointments()
@@ -432,7 +461,11 @@ END //
 
 DELIMITER ;
 
+<<<<<<< HEAD
 -- cancel an appointment, only when the patient is the one who booked the appointment, and the appointment is in the future
+=======
+-- Cancel an appointment for a patient, only if the patient_id of the appointment is the patient's id, otherwise an error is reported.
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540
 DELIMITER //
 
 CREATE PROCEDURE delete_appointments(in p_app_no INT, in p_patt_id int)
@@ -463,7 +496,11 @@ END //
 
 DELIMITER ;
 
+<<<<<<< HEAD
 -- create appointment for an active doctor for a specific day
+=======
+-- create appointment for one doctor for a specific day, update that you can only create an appointment if the doctor is active
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540
 delimiter $$ 
 
 create PROCEDURE create_daily_app(doctor_id INT, app_date DATE)
@@ -499,7 +536,11 @@ END$$
 
 DELIMITER ;
 
+<<<<<<< HEAD
 -- create appointment for all active doctors for a specific day
+=======
+-- Create appointments for all active doctors
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540
 delimiter $$
 
 create procedure create_appointment_all_doctor(in app_date date)
@@ -522,6 +563,7 @@ begin
 end $$
 
 delimiter ;
+<<<<<<< HEAD
 
 -- manager could change the nurse partner for doctor, and only manager could call this procedure
 delimiter $$
@@ -672,3 +714,5 @@ end $$
 
 
     
+=======
+>>>>>>> 2ca82ad4d5ed82b450032070e8d8284cf4148540

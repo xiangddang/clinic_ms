@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = () => {
-    // 发送登录请求到后端
+    // Ensure both username and password are provided
+    if (!username || !password) {
+      console.error('Please enter both username and password.');
+      return;
+    }
+  
+    // Send login request to the server
     fetch('http://localhost:3001/login', {
       method: 'POST',
       headers: {
@@ -16,11 +24,36 @@ const Login = () => {
       .then(response => response.json())
       .then(data => {
         console.log(data);
-        // 处理后端返回的数据，例如，显示成功消息或错误提示
+  
+        // Check if the login was successful based on your server response
+        if (data.success) {
+          // Determine the user's role
+          const role = data.role;
+  
+          // Redirect to the corresponding page based on the role
+          switch (role) {
+            case 'patient':
+              navigate('/patient');
+              break;
+            case 'employee':
+              navigate('/employee');
+              break;
+            default:
+              console.error('Unknown role:', role);
+          }
+        } else {
+          // Example: show an error message to the user
+          console.error('Login failed. Please check your credentials.');
+        }
       })
       .catch(error => {
         console.error('Error during login:', error);
       });
+  };  
+
+  const handleRegister = () => {
+    // Navigate to the Register page
+    navigate('/register');
   };
 
   return (
@@ -39,6 +72,9 @@ const Login = () => {
         <br />
         <button type="button" onClick={handleLogin}>
           Login
+        </button>
+        <button type="button" onClick={handleRegister}>
+          Register
         </button>
       </form>
     </div>
