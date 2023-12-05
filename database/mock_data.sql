@@ -26,30 +26,29 @@ INSERT INTO specialty (spe_name, spe_discription) VALUES ('Gynecology',
 INSERT INTO specialty (spe_name, spe_discription) VALUES ('Psychiatry', 
 'Specializes in the diagnosis, treatment, and prevention of mental illnesses and disorders.');
 
--- employee table有改变，需要重新插入数据
 -- insert data into Employee
-INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, 
-is_manager, is_doctor, is_nurse, spe_id, username) VALUES 
-('Dr. Alice Smith', '1980-04-15', '1234567890', '123 Main St', 'Medville', 'CA', '90210', '2010-06-01',
- False, True, False, 1, 'drsmith');
+INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, status, 
+is_manager, is_doctor, is_nurse, biological_sex, spe_id, username) VALUES 
+('Dr. Alice Smith', '1980-04-15', '1234567890', '123 Main St', 'Medville', 'CA', '90210', '2023-11-01', 'active', 
+ False, True, False, 'female', 1, 'drsmith');
 
 INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, 
 is_manager, is_doctor, is_nurse, spe_id, username) VALUES 
-('Nurse Bob Johnson', '1985-08-20', '2345678901', '456 Side Rd', 'Nursville', 'TX', '75001', '2015-03-15',
- False, False, True, 1, 'nursejones');
+('Nurse Bob Johnson', '1985-08-20', '2345678901', '456 Side Rd', 'Nursville', 'TX', '75001', '2023-11-01', 'active', 
+ False, False, True, 'male', 1, 'nursejones');
  
 -- insert data into DoctorNursePair
 INSERT INTO DoctorNursePair (doctor_id, nurse_id, pair_time) VALUES 
-(1, 2, current_timestamp());
+(1, 2, '2023-11-01');
 
 -- insert data into Patient
 INSERT INTO Patient (name, date_of_birth, phone, street, city, state, zipcode, 
-emergency_name, emergency_phone, username) VALUES 
-('John Doe', '1990-01-01', '3456789012', '789 Circle Ave', 'Patienttown', 'NY', '10001', 'Jane Doe', '4567890123', 'johndoe');
+emergency_name, emergency_phone, username, biological_sex) VALUES 
+('John Doe', '1990-01-01', '3456789012', '789 Circle Ave', 'Patienttown', 'NY', '10001', 'Jane Doe', '4567890123', 'johndoe', 'male');
 
 INSERT INTO Patient (name, date_of_birth, phone, street, city, state, zipcode,
- emergency_name, emergency_phone, username) VALUES 
- ('Jane Doe', '1992-02-02', '4567890123', '321 Square Blvd', 'Healthcity', 'FL', '33101', 'John Doe', '3456789012', 'janedoe');
+ emergency_name, emergency_phone, username, biological_sex) VALUES 
+ ('Jane Doe', '1992-02-02', '4567890123', '321 Square Blvd', 'Healthcity', 'FL', '33101', 'John Doe', '3456789012', 'janedoe', 'female');
 
 -- insert data into credit card, only patient need add credit card info
 INSERT INTO credit_card (card_num, card_holer_name, expiration_time, card_type) VALUES 
@@ -60,56 +59,21 @@ INSERT INTO credit_card (card_num, card_holer_name, expiration_time, card_type) 
 
 -- insert data into billing
 INSERT INTO billing (amount, status, created_date, payment_date, pay_card, patient_id) VALUES 
-(150.0, 'Paid', '2023-01-15', '2023-01-20', 1, 1);
+(25.00, 'paid', '2023-01-15', '2023-11-20', 1, 1);
 
 INSERT INTO billing (amount, status, created_date, payment_date, pay_card, patient_id) VALUES 
-(200.5, 'Unpaid', '2023-02-10', '2023-02-15', 2, 2);
+(25.00, 'unpaid', '2023-02-10', '2023-11-15', 2, 2);
 
--- insert data into appointment
--- 2023-11-27
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '09:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '09:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '10:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '10:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '11:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '11:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '14:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '14:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '15:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '15:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '16:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '16:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-27', '17:00:00', NULL, 1);
-
--- 2023-11-28
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '09:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '09:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '10:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '10:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '11:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '11:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '14:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '14:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '15:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '15:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '16:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '16:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-28', '17:00:00', NULL, 1);
-
--- 2023-11-29
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '09:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '09:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '10:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '10:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '11:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '11:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '14:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '14:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '15:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '15:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '16:00:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '16:30:00', NULL, 1);
-INSERT INTO appointments (app_date, app_time, patient_id, doctor_id) VALUES ('2023-11-29', '17:00:00', NULL, 1);
+-- insert data into appointment by calling procedure
+call reate_appointment_all_doctor('2023-12-5');
+call reate_appointment_all_doctor('2023-12-6');
+call reate_appointment_all_doctor('2023-12-7');
+call reate_appointment_all_doctor('2023-12-8');
+call reate_appointment_all_doctor('2023-12-11');
+call reate_appointment_all_doctor('2023-12-12');
+call reate_appointment_all_doctor('2023-12-13');
+call reate_appointment_all_doctor('2023-12-14');
+call reate_appointment_all_doctor('2023-12-15');
 
 -- insert data into disease
 INSERT INTO disease (dis_name, dis_descirption) VALUES ('Common Cold', 
