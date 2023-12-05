@@ -5,26 +5,14 @@ db_manager = DatabaseManager()
 user_bp = Blueprint('user_bp', __name__)
 
 # login
-@user_bp.route('/login', methods=['GET'])
-def login():
-    # assume the request is json
-    data = request.get_json() 
-    
-    # check if the required fields are in the request
-    if 'username' not in data or 'password' not in data:
-        return jsonify({'error': 'Missing username or password'}), 400
-
-    username = data.get('username')
-    password = data.get('password')
+@user_bp.route('/<username>', methods=['GET'])
+def login(username):
 
     # Fetch user info from database
     user = db_manager.fetchUser(username)
     
     if user:
-        if user['password'] == password:
-            return jsonify({'success': 'login success'}), 200
-        else:
-            return jsonify({'error': 'wrong password'}), 401
+        return user, 200
     else:
         return jsonify({'error': 'user not found'}), 404
 
@@ -74,15 +62,9 @@ def update_user(username):
     password = data.get('password')
     email = data.get("email")
     
-    user = db_manager.fetchUser(username)
-    if not user:
-        return jsonify({'error': 'user not found'}), 404
-    # if no info changed, return fail
-    if user['password'] == password and user['email'] == email:
-        return jsonify({'error': 'no change'}), 400
-    
+    # check logic in the mysql procedure
     update = db_manager.updateUser(username, password, email)
     if update:
         return jsonify({'success': f'user `{username}` updated'}), 200
     else:
-        return jsonify({'error': 'user not found'}), 404
+        return jsonify({'unsuccessful': 'unable to update'}), 404

@@ -34,10 +34,10 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return False
     
-    def updateUser(self, username, password, role, email):
+    def updateUser(self, username, password, email):
         try:
             with self.connection.cursor() as cursor:
-                cursor.execute("UPDATE User SET password=%s, role=%s, email=%s WHERE username=%s", (password, role, email, username))
+                cursor.callproc('edit_user_account', (username, password, email))
             self.connection.commit()
             return True
         except pymysql.Error as e:

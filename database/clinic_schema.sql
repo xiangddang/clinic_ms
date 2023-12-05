@@ -221,22 +221,31 @@ end;
 //
 delimiter ;
 
-<<<<<<< HEAD
 -- change information of user account, only change email and password
 DELIMITER //
-Create procedure edit_user_account(in username varchar(32), IN new_email VARCHAR(64), IN new_password VARCHAR(64))
+Create procedure edit_user_account(in p_username varchar(32), IN new_email VARCHAR(64), IN new_password VARCHAR(64))
 BEGIN
-    -- Check if the user exists
-    IF EXISTS (SELECT 1 FROM users WHERE username = username) THEN
-        -- Update the user's email and password
-        UPDATE User
-        SET email = new_email, password = new_password
-        WHERE username = username;
-        
-        SELECT 'User account updated successfully' AS result;
-    ELSE
-        SELECT 'User not found' AS result;
-    END IF;
+    declare current_email varchar(64);
+    declare current_password varchar(64);
+    declare result boolean;
+
+    select email, password into current_email, current_password from User where username = p_username;
+
+    -- Check if email and password are different from the current ones
+    if current_email is not null and current_email is not null THEN
+        if current_email <> new_email or current_password <> new_password THEN
+            update User set email = new_email, password = new_password where username = p_username;
+        else
+            -- email and password does not change
+            signal sqlstate '45000' set MESSAGE_TEXT = 'No changes made to the user account';
+        end if;
+    else
+        -- user does not exist
+        signal sqlstate '45000' set MESSAGE_TEXT = 'User does not exist';
+    end if;
+
+    -- return result
+    select result;
 END //
 DELIMITER ;
 
