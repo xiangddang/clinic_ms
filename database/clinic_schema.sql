@@ -117,10 +117,8 @@ create table MedicalRecords(
     record_date date not null,
 	patient_id int not null,
     doctor_id int not null,
-    nurse_id int not null,
     foreign key (patient_id) references Patient(patient_id) on delete cascade on update cascade,
-    foreign key (doctor_id) references Employee(emp_id) on delete cascade on update cascade,
-    foreign key (nurse_id) references Employee(emp_id) on delete cascade on update cascade
+    foreign key (doctor_id) references Employee(emp_id) on delete cascade on update cascade
 );
 
 create table diagnosis (

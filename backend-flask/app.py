@@ -15,4 +15,3 @@ app.register_blueprint(employee_bp, url_prefix='/employee')
     
 if __name__ == '__main__':
     app.run(debug=True)
-
