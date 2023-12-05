@@ -23,7 +23,9 @@ const PatientProfile = () => {
         <li>Phone: {profileData.phone}</li>
         <li>Address: {profileData.address}</li>
       </ul>
-      <Link to={`/patient/profile/${patientId}/edit`}>Edit Profile</Link>
+      <Link to={`/patient/profile/${patientId}/edit`} className="btn btn-primary">
+        Edit Profile
+      </Link>
     </div>
   );
 };

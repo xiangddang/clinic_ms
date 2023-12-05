@@ -10,7 +10,7 @@ function PatientPage() {
       <Routes>
         <Route path='/' element={<Patient />} />
         <Route path='/check_prescript/:patientId' element={<CheckPrescript />} />
-        <Route path="/patient/profile/:patientId" element={<PatientProfile />} />
+        <Route path="/profile/:patientId" element={<PatientProfile />} />
         <Route path="/profile/:patientId/edit" element={<EditProfile />} />
       </Routes>
     </div>
