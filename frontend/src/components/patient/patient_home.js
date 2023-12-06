@@ -160,6 +160,7 @@ const Patient = () => {
         <BookAppointment
           show={showAppointmentModal}
           handleClose={handleCloseAppointmentModal}
+          patientId={patientId}
         />
       </Container>
     </div>
