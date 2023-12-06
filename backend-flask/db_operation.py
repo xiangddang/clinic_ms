@@ -1,16 +1,19 @@
 import pymysql
+import os
+from dotenv import load_dotenv
 
 # connect to database
 import pymysql
+load_dotenv('.env')
 
 class DatabaseManager:
     def __init__(self):
         # 初始化数据库连接
         self.connection = pymysql.connect(
             host='localhost',
-            user='root',
-            password='LZUXyy2019@',
-            database='clinic'
+            user=os.getenv('DATABASE_USER'),
+            password=os.getenv('DATABASE_PASSWORD'),
+            database=os.getenv('DATABASE_NAME')
         )
 
     def fetchUser(self, username):
@@ -43,17 +46,29 @@ class DatabaseManager:
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return False
-        
+    
+    # fetch patient info by patient_id
     def fetchPatient(self, patient_id):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT * FROM Patient WHERE patient_id=%s", (patient_id,))
+                cursor.callproc('get_patient_info', (patient_id,))
                 patient = cursor.fetchone()
             return patient
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None
     
+    # update info of patient with patient_id
+    def updatePatient(self, patient_id, name, date_of_birth, phone, street, city, state, zipcode, emergency_name, emergency_phone, biological_sex):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('update_patient_information', (patient_id, name, date_of_birth, phone, street, city, state, zipcode, emergency_name, emergency_phone, biological_sex,))
+            self.connection.commit()
+            return True
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None        
+            
     def fetchEmployee(self, employee_id):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -84,38 +99,43 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return None
     
+    # fetch all appointments of patient by patient id, rescending order by date and time
     def fetchAppointmentsPatient(self, patient_id):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT * FROM appointments WHERE patient_id=%s", (patient_id,))
+                cursor.callproc('get_appoint_by_patId', (patient_id,))
                 appointments = cursor.fetchall()
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None
     
-    def fetchAppointmentsDoctor(self, doctor_id):
+    def fetchAppointmentsEmployee(self, emp_id):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT * FROM appointments WHERE doctor_id=%s", (doctor_id,))
+                cursor.execute("SELECT * FROM appointments WHERE doctor_id=%s", (emp_id,))
                 appointments = cursor.fetchall()
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None
     
-    def fetchParterDoctor(self, nurse_id):
+    # book appointment for a patient
+    def bookAppointment(self, app_id, patient_id):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT doctor_id FROM DoctorNursePair WHERE nurse_id=%s", (nurse_id,))
-                doctor = cursor.fetchone()
+                cursor.callproc('book_appointment', (app_id, patient_id,))
+            self.connection.commit()
+            return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
-            return None
-        
-    def fetchPartnerNurse(self, doctor_id):
+            return False
+    
+    # fetch all available appointments for patients to book
+    def fetchAllAvailableAppointments(self):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT nurse_id FROM DoctorNursePair WHERE doctor_id=%s", (doctor_id,))
-                nurse = cursor.fetchone()
+                cursor.callproc('get_available_appointments')
+                appointments = cursor.fetchall()
+            return appointments
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None

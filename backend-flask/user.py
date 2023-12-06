@@ -38,7 +38,7 @@ def register():
     # create user
     success = db_manager.createPatientUser(username, password, email)
     if success:
-        return jsonify({'success': 'user created'}), 201
+        return jsonify({'message': 'user created'}), 201
     else:
         return jsonify({'error': 'failed to create user'}), 500
 
@@ -56,6 +56,6 @@ def update_user(username):
     # check logic in the mysql procedure
     update = db_manager.updateUser(username, password, email)
     if update:
-        return jsonify({'success': f'user `{username}` updated'}), 200
+        return jsonify({'message': f'user `{username}` updated'}), 200
     else:
-        return jsonify({'unsuccessful': 'unable to update'}), 404
+        return jsonify({'error': 'unable to update'}), 404

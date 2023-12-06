@@ -5,7 +5,7 @@ class UserDataService {
         return axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/user/${username}`
         );
-      }
+    }
 
     updateUser(username, data) {
         return axios.put(

@@ -186,7 +186,6 @@ create procedure update_patient_information(
     in p_zipcode char(5),
     in p_emergency_name varchar(32),
     in p_emergency_phone char(10),
-    in p_username varchar(32),
     in p_biological_sex enum('male', 'female')
 )
 begin
@@ -214,7 +213,7 @@ delimiter ;
 delimiter //
 Create procedure get_patient_info(in patt_id int)
 begin
-    Select name, date_of_birth, biological_sex, phone, street, city, state, zipcode
+    Select *
     From Patient
     Where patient_id = patt_id;
 end;
@@ -388,7 +387,9 @@ DELIMITER //
 
 Create PROCEDURE get_appoint_by_patId(in patt_id int)
 Begin
-    Select * from appointments where patient_id = patt_id;
+    Select * from appointments 
+    where patient_id = patt_id
+    order by app_date desc, app_time desc;
 End //
 
 DELIMITER ;
@@ -436,11 +437,16 @@ DELIMITER //
 
 CREATE PROCEDURE get_available_appointments()
 BEGIN
-    SELECT *
+    SELECT 
+        appointment_no, 
+        DATE_FORMAT(app_date, '%Y-%m-%d') AS app_date, 
+        TIME_FORMAT(app_time, '%H:%i:%s') AS app_time, 
+        Employee.name
     FROM appointments
+    join Employee on appointments.doctor_id = Employee.emp_id
     WHERE patient_id IS NULL
-      AND appointment_date >= NOW()
-      AND appointment_date <= DATE_ADD(NOW(), INTERVAL 1 WEEK);
+      AND app_date >= NOW()
+      AND app_date <= DATE_ADD(NOW(), INTERVAL 1 WEEK);
 END //
 
 DELIMITER ;
