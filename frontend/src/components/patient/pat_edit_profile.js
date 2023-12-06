@@ -1,29 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import PatientDataService from '../../services/patient';
 
 const EditProfile = () => {
-  const { patientId } = useParams();
+  const { username, patientId } = useParams();
+  const [profileData, setProfileData] = useState({});
+  const [formData, setFormData] = useState(null);
 
-  // Dummy data (replace with actual data from your state or API)
-  const initialData = {
-    name: 'John Doe',
-    dob: '01/01/1990',
-    sex: 'Male',
-    phone: '123-456-7890',
-    address: '123 Main St, Cityville',
+  useEffect(() => {
+    // Fetch patient data when the component mounts
+    fetchPatientData(username);
+  }, [username]);
+
+  const fetchPatientData = async (username) => {
+    try {
+      const response = await PatientDataService.getPatient(username);
+      setProfileData(response.data);
+
+      // Set initial form data
+      setFormData({
+        name: response.data.name,
+        dob: response.data.date_of_birth,
+        sex: response.data.biological_sex,
+        phone: response.data.phone,
+        street: response.data.street,
+        city: response.data.city,
+        state: response.data.state,
+        zipcode: response.data.zipcode,
+      });
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
+    }
   };
-
-  const [formData, setFormData] = useState(initialData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleConfirm = () => {
-    // Handle form submission (e.g., send data to the backend)
-    // For simplicity, we're just logging the form data
-    console.log('Form data submitted:', formData);
+  const handleConfirm = async () => {
+    try {
+      // Update patient data in the backend
+      const response = await PatientDataService.updatePatient(patientId, formData);
+      console.log('Profile updated successfully:', response.data);
+
+      // Optionally, you can update the local state with the new data
+      setProfileData(response.data);
+    } catch (error) {
+      console.error('Error updating patient data:', error);
+    }
   };
 
   return (
@@ -71,20 +96,26 @@ const EditProfile = () => {
         </label>
         <br />
         <label>
-          Address:
+          Street:
           <input
             type="text"
             name="address"
-            value={formData.address}
+            value={formData.street}
             onChange={handleChange}
           />
         </label>
         <br />
-        <Link to={`/patient/profile/${patientId}`}>
-          <button type="button" onClick={handleConfirm}>
-            Confirm
-          </button>
-        </Link>
+      {/* Add more form inputs as needed */}
+
+      {/* Confirm button */}
+      <button type="button" onClick={handleConfirm}>
+        Confirm
+      </button>
+
+      {/* Link to go back to the profile page */}
+      <Link to={`/patient/profile/${username}/${patientId}`}>
+        <button type="button">Cancel</button>
+      </Link>
       </form>
     </div>
   );

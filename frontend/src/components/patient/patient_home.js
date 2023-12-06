@@ -71,7 +71,7 @@ const Patient = () => {
             <Nav.Link as={Link} to="/patient">
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to={`/patient/profile/${patientId}`}>
+            <Nav.Link as={Link} to={`/patient/profile/${username}/${patientId}`}>
               Profile
             </Nav.Link>
           </Nav>
