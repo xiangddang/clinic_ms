@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import {
   Navbar,
@@ -12,8 +13,10 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../shared/navbar.css";
 import BookAppointment from "./book_appoint";
+import PatientDataService from '../../services/patient';
 
 const Patient = () => {
+  const { username } = useParams();
   // 取得available预约时间
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
 
@@ -21,7 +24,7 @@ const Patient = () => {
   const handleCloseAppointmentModal = () => setShowAppointmentModal(false);
 
   // temp patientID
-  const patientId = "123";
+  const patientId = PatientDataService.getPatient(username);
   const [latestPrescription, setLatestPrescription] = useState(null);
   const [latestAppointment, setLatestAppointment] = useState(null);
 

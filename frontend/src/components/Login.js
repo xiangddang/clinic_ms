@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UserDataService from '../services/user'
+import UserDataService from '../services/user';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -21,9 +21,9 @@ const Login = () => {
         const data = response.data;
         if (data.username === username && data.password === password) {
           if (data.role === 'patient') {
-            navigate('/patient')
+            navigate('/patient/${username}')
           } else {
-            navigate('/employee')
+            navigate('/employee/${username}')
           }
         }
       } else {
