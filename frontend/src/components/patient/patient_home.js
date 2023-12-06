@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Navbar, Nav, Button, Container, Row, Col, Card } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Button,
+  Container,
+  Row,
+  Col,
+  Card,
+} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../shared/navbar.css";
 import BookAppointment from "./book_appoint";
@@ -13,8 +21,9 @@ const Patient = () => {
   const handleCloseAppointmentModal = () => setShowAppointmentModal(false);
 
   // temp patientID
-  const patientId = '123';
+  const patientId = "123";
   const [latestPrescription, setLatestPrescription] = useState(null);
+  const [latestAppointment, setLatestAppointment] = useState(null);
 
   useEffect(() => {
     // 在组件挂载时获取病患的最近一次处方信息
@@ -29,7 +38,23 @@ const Patient = () => {
       // 设置最近一次处方信息的状态
       setLatestPrescription(data.latestPrescription);
     } catch (error) {
-      console.error('Error fetching latest prescription:', error);
+      console.error("Error fetching latest prescription:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch the latest appointment when the component mounts
+    fetchLatestAppointment(patientId);
+  }, [patientId]);
+  
+  const fetchLatestAppointment = async (patientId) => {
+    try {
+      // Fetch the latest appointment for the specific patient
+      const response = await fetch(`/api/appointments/${patientId}/latest`);
+      const data = await response.json();
+      setLatestAppointment(data.latestAppointment);
+    } catch (error) {
+      console.error('Error fetching latest appointment:', error);
     }
   };
 
@@ -65,26 +90,27 @@ const Patient = () => {
 
         {/* 第二个板块：处方信息 */}
         <Row className="mt-4">
-        <Col>
-          <Card>
-            <Card.Body>
-              <Card.Title>Prescription Information</Card.Title>
-              {/* 根据最近一次处方信息显示数据 */}
-              {latestPrescription ? (
-                <>
-                  <p>Date: {latestPrescription.date}</p>
-                  <p>Medication: {latestPrescription.medication}</p>
-                  <p>Dosage: {latestPrescription.dosage}</p>
-                  {/* 其他处方信息 */}
-                </>
-              ) : (
-                <p>No prescription available.</p>
-              )}
-              <Link to={`/check_prescript/${patientId}`}>Check Details</Link>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+          <Col>
+            <Card>
+              <Card.Body>
+                <Card.Title>Prescription Information</Card.Title>
+                {/* 根据最近一次处方信息显示数据 */}
+                {latestPrescription ? (
+                  <>
+                    <p>Date: {latestPrescription.date}</p>
+                    <p>Medication: {latestPrescription.medication}</p>
+                    <p>Dosage: {latestPrescription.dosage}</p>
+                    {/* 其他处方信息 */}
+                    <Link to={`/check_prescript/${patientId}`}>Check Details</Link>
+                  </>
+                ) : (
+                  <p>No prescription available.</p>
+                )}
+                
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
 
         {/* 第三个板块：预约信息 */}
         <Row className="mt-4">
@@ -92,7 +118,19 @@ const Patient = () => {
             <Card>
               <Card.Body>
                 <Card.Title>Appointment Information</Card.Title>
-                {/* 在这里添加你想要显示的内容 */}
+                {/* 显示最近的一次预约信息 */}
+                {latestAppointment ? (
+                  <>
+                    <p>Date: {latestAppointment.date}</p>
+                    <p>Doctor: {latestAppointment.doctorName}</p>
+                    {/* Add other appointment details */}
+                    <Link to={`/appointment_list/${patientId}`}>
+                      Check Details
+                    </Link>
+                  </>
+                ) : (
+                  <p>No appointment available.</p>
+                )}
               </Card.Body>
             </Card>
           </Col>
