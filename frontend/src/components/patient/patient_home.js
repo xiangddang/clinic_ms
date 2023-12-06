@@ -23,8 +23,25 @@ const Patient = () => {
   const handleShowAppointmentModal = () => setShowAppointmentModal(true);
   const handleCloseAppointmentModal = () => setShowAppointmentModal(false);
 
-  // temp patientID
-  const patientId = PatientDataService.getPatient(username);
+  const [profileData, setProfileData] = useState(null);
+
+  // Dummy data (replace with actual data from API)
+  useEffect(() => {
+    fetchPatientData(username);
+  }, [username]);
+
+  const fetchPatientData = async (username) => {
+    try {
+      const response = await PatientDataService.getPatient(username);
+      console.log(response.data)
+      setProfileData(response.data);
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
+    }
+  }
+  const patientId = profileData ? profileData.patient_id : null;
+  console.log(patientId);
+  
   const [latestPrescription, setLatestPrescription] = useState(null);
   const [latestAppointment, setLatestAppointment] = useState(null);
 

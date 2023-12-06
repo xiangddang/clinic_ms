@@ -4,6 +4,8 @@ import PatientDataService from '../../services/patient';
 
 const PatientProfile = () => {
   const { username, patientId } = useParams();
+  console.log(username)
+  console.log(patientId)
   const [profileData, setProfileData] = useState(null);
 
   // Dummy data (replace with actual data from API)
@@ -36,8 +38,11 @@ const PatientProfile = () => {
       ) : (
         <p>Loading patient data...</p>
       )}
-      <Link to={`/patient/profile/${patientId}/edit`} className="btn btn-primary">
+      <Link to={`/patient/profile/${username}/${patientId}/edit`} className="btn btn-primary">
         Edit Profile
+      </Link>
+      <Link to={`/patient/${username}`} className="btn btn-primary">
+        Back
       </Link>
     </div>
   );
