@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from user import user_bp
 from employee import employee_bp
 from patients import patient_bp
@@ -6,6 +7,8 @@ from manage import manage_bp
 
 
 app = Flask(__name__)
+
+CORS(app)
 
 app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(patient_bp, url_prefix='/patient')
