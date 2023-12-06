@@ -328,9 +328,45 @@ delimiter //
 create procedure get_employee_info(in employee_id int)
 begin
     select name, date_of_birth, phone, street, city, state, zipcode, biological_sex, spe_name 
-    from Employee where emp_id = employee_id
-    join specialty on specialty.spe_id = Employee.spe_id;
-end
+    from Employee 
+    join specialty on specialty.spe_id = Employee.spe_id
+    where emp_id = employee_id;
+end //
+delimiter ;
+
+-- update information of employee
+delimiter $$
+create procedure update_employee_info(
+    in p_employee_id int,
+    in p_name varchar(64),
+    in p_date_of_birth date,
+    in p_phone char(10),
+    in p_street varchar(64),
+    in p_city varchar(16),
+    in p_state char(2),
+    in p_zipcode char(5),
+    in p_biological_sex enum('male', 'female'),
+    in p_spe_name varchar(32)
+)
+begin
+    decalre v_spe_id int;
+    -- get the specialty id
+    select spe_id into v_spe_id from specialty where spe_name = p_spe_name;
+    -- update the employee record
+    update Employee
+    SET
+        name = p_name,
+        date_of_birth = p_date_of_birth,
+        phone = p_phone,
+        street = p_street,
+        city = p_city,
+        state = p_state,
+        zipcode = p_zipcode
+        biological_sex = p_biological_sex,
+        spe_id = spe_id
+    where
+        emp_id = p_employee_id;
+end $$
 delimiter ;
 
 -- when employee resign, mark it as inactive and delete user account, delete all appointments in the future

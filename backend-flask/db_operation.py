@@ -68,37 +68,29 @@ class DatabaseManager:
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None        
-            
+    
+    # fetch information of an employee by employee_id
     def fetchEmployee(self, employee_id):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT * FROM Employee WHERE emp_id=%s", (employee_id,))
+                cursor.callproc('get_employee_info', (employee_id,))
                 employee = cursor.fetchone()
             return employee
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None
         
-    def fetchAllPatients(self):
+    # update information of an employee
+    def updateEmployee(self, employee_id, name, date_of_birth, phone, street, city, state, zipcode, biological_sex, spe_name):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT * FROM Patient")
-                patients = cursor.fetchall()
-            return patients
+                cursor.callproc('update_employee_info', (employee_id, name, date_of_birth, phone, street, city, state, zipcode, biological_sex, spe_name,))
+            self.connection.commit()
+            return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
-            return None
-    
-    def fetchAllEmployees(self):
-        try:
-            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT * FROM Employee")
-                employees = cursor.fetchall()
-            return employees
-        except pymysql.Error as e:
-            print(f"Database error: {str(e)}")
-            return None
-    
+            return False
+        
     # fetch all appointments of patient by patient id, rescending order by date and time
     def fetchAppointmentsPatient(self, patient_id):
         try:
@@ -161,6 +153,7 @@ class DatabaseManager:
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return False
+    
 
     def close_connection(self):
         # 关闭数据库连接
