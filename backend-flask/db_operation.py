@@ -223,6 +223,50 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return None
 
+    # fetch all employees for admin to view
+    def fetchAllEmployees(self):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('get_all_employees')
+                employees = cursor.fetchall()
+            return employees
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+    
+    # fetch all patients for admin to view
+    def fetchAllPatients(self):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('get_all_patients')
+                patients = cursor.fetchall()
+            return patients
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+        
+    # fetch all booked appointments for admin to view
+    def fetchAllAppointments(self):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('get_all_appointments')
+                appointments = cursor.fetchall()
+            return appointments
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+    
+    # create a new employee, for role input manager for manager, doctor for doctor, nurse for nurse
+    def createEmployee(self, name, date_of_birth, phone, street, city, state, zipcode, start_date, role, spe_name, email):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('create_employee', (name, date_of_birth, phone, street, city, state, zipcode, start_date, role, spe_name, email,))
+            self.connection.commit()
+            return True
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return False
+    
     def close_connection(self):
-        # 关闭数据库连接
+        # close connection
         self.connection.close()

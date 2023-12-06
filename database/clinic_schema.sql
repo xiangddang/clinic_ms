@@ -145,8 +145,6 @@ create table prescription (
     foreign key (medical_records_no) references MedicalRecords(medical_records_no) on delete cascade on update cascade
 );
 
-
-
 -- all user defined functions below
 
 -- get user by username
@@ -214,7 +212,7 @@ delimiter //
 Create procedure get_patient_info(in p_username varchar(32))
 begin
     Select name, DATE_FORMAT(date_of_birth, '%Y-%m-%d') as date_of_birth,
-    phone, street, city, state, zipcode, emergency_name, p_emergency_phone, username, biological_sex
+    phone, street, city, state, zipcode, emergency_name, emergency_phone, username, biological_sex
     From Patient
     Where username = p_username;
 end;
@@ -667,6 +665,45 @@ begin
 end $$
 
 delimiter ;
+
+-- manager view: get all employee info
+delimiter $$
+create procedure get_all_employees()
+begin
+    select emp_id, name, date_format(date_of_birth, '%Y-%m-%d') as date_of_birth,
+    phone, street, city, state, zipcode, date_format(start_date, '%Y-%m-%d') as start_date,
+    status, is_manager, is_nurse, biological_sex, spe_name, username
+    from Employee
+    join specialty on specialty.spe_id = Employee.spe_id
+    order by name;
+end $$
+delimiter ;
+
+-- manager view: all booked appointment
+delimiter $$
+create procedure get_all_appointments()
+begin
+    select date_format(app_date, '%Y-%m-%d') as app_date, 
+        TIME_FORMAT(app_time, '%H:%i:%s') as app_time,
+        Patient.name as patient_name,
+        Employee.name as doctor_name
+    from appointments 
+    left join Patient on appointments.patient_id = Patient.patient_id
+    join Employee on appointments.doctor_id = Employee.emp_id
+    where patient_id is not null
+    order by app_date desc, app_time desc;
+end $$
+
+-- manager view: all patients
+delimiter $$
+create procedure get_all_patients()
+begin
+    select patient, name, date_format(date_of_birth, '%Y-%m-%d') as date_of_birth,
+    phone, street, city, state, zipcode, emergency_name, emergency_phone, username, biological_sex
+    from Patient
+    order by name;
+end $$
+
 
 -- medical records for a patient
 DELIMITER $$
