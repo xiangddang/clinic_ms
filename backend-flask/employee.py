@@ -38,3 +38,67 @@ def update_employee(employee_id):
         return jsonify({'message': f'employee `{employee_id}` updated'}), 200
     else:
         return jsonify({'error': 'failed to update employee'}), 500
+
+# get all appointments of an employee
+@employee_bp.route('/apps/<employee_id>', methods=['GET'])
+def get_appointments_employee(employee_id):
+    appointments = db_manager.fetchAppointmentsEmployee(employee_id)
+    if appointments:
+        return jsonify(appointments), 200
+    else:
+        return jsonify({'error': 'appointment record not found'}), 404
+    
+# get all medications to choose from
+@employee_bp.route('/meds', methods=['GET'])
+def get_medications():
+    medications = db_manager.fetchAllMedication()
+    if medications:
+        return jsonify(medications), 200
+    else:
+        return jsonify({'error': 'medication record not found'}), 404
+    
+# get all diseases to choose from
+@employee_bp.route('/dis', methods=['GET'])
+def get_diseases():
+    diseases = db_manager.fetchAllDisease()
+    if diseases:
+        return jsonify(diseases), 200
+    else:
+        return jsonify({'error': 'disease record not found'}), 404
+    
+# create a new medical record for a patient
+@employee_bp.route('/medrec/<patient_id>/<doctor_id>', methods=['POST'])
+def create_medical_record(patient_id, doctor_id):
+    create = db_manager.createMedicalRecord(patient_id, doctor_id)
+    if create:
+        return jsonify({'message': f'medical record created'}), 200
+    else:
+        return jsonify({'error': 'failed to create medical record'}), 500
+
+# add a diagnosis to a medical record
+@employee_bp.route('/diag/<medical_record_id>/<disease>', methods=['POST'])
+def create_diagnosis(medical_record_id, disease):
+    create = db_manager.addDiagnosis(medical_record_id, disease)
+    if create:
+        return jsonify({'message': f'diagnosis created'}), 200
+    else:
+        return jsonify({'error': 'failed to create diagnosis'}), 500
+
+# add a prescription to a medical record
+@employee_bp.route('/pres/<medical_record_id>', methods=['POST'])
+def create_prescprition(medical_record_id):
+    data = request.get_json()
+    if not ('medication_name' in data and 'dosage' in data \
+        and 'frequency' in data and 'duration' in data):
+        return jsonify({'error': 'Missing information'}), 400
+    
+    medication_name = data.get('medication_name')
+    dosage = data.get('dosage')
+    frequency = data.get('frequency')
+    duration = data.get('duration')
+    
+    create = db_manager.addPrescription(medical_record_id, medication_name, dosage, frequency, duration)
+    if create:
+        return jsonify({'message': f'prescription created'}), 200
+    else:
+        return jsonify({'error': 'failed to create prescription'}), 500

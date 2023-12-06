@@ -47,11 +47,11 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return False
     
-    # fetch patient info by patient_id
-    def fetchPatient(self, patient_id):
+    # fetch patient info by username
+    def fetchPatient(self, username):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.callproc('get_patient_info', (patient_id,))
+                cursor.callproc('get_patient_info', (username,))
                 patient = cursor.fetchone()
             return patient
         except pymysql.Error as e:
@@ -104,8 +104,9 @@ class DatabaseManager:
     def fetchAppointmentsEmployee(self, emp_id):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute("SELECT * FROM appointments WHERE doctor_id=%s", (emp_id,))
+                cursor.callproc('get_appoint_by_empId', (emp_id,))
                 appointments = cursor.fetchall()
+            return appointments
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None
@@ -132,16 +133,6 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return None
     
-    # fetch all medical records of a patient
-    def fetchMedicalRecords(self, patient_id):
-        try:
-            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.callproc('get_medical_records', (patient_id,))
-                records = cursor.fetchall()
-            return records
-        except pymysql.Error as e:
-            print(f"Database error: {str(e)}")
-            return None
     
     # cancel appointment for a patient
     def cancelAppointment(self, app_id, patient_id):
@@ -153,7 +144,84 @@ class DatabaseManager:
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return False
+        
+    # fetch all medical records of a patient
+    def fetchMedicalRecords(self, patient_id):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('get_medical_records', (patient_id,))
+                records = cursor.fetchall()
+            return records
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
     
+    # fetch all disease for doctor to choose
+    def fetchAllDisease(self):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('allDisease')
+                diseases = cursor.fetchall()
+            return diseases
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+    
+    # fectch all medication for doctor to choose
+    def fetchAllMedication(self):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('allMedication')
+                medications = cursor.fetchall()
+            print(medications)
+            return medications
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+        
+    # create a medical record for a patient
+    def createMedicalRecord(self, patient_id, doctor_id):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('create_medical_record', (patient_id, doctor_id,))
+            self.connection.commit()
+            return True
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return False
+    
+    # add a diagnosis for a medical record
+    def addDiagnosis(self, record_no, diagnosis):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('addDiagnosis', (record_no, diagnosis,))
+            self.connection.commit()
+            return True
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return False
+    
+    # add a prescription for a medical record
+    def addPrescription(self, record_no, medication_name, dosage, frequency, duration):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('addPrescription', (record_no, medication_name, dosage, frequency, duration,))
+            self.connection.commit()
+            return True
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return False
+    
+    # fecth billing for a patient
+    def fetchBillingPatient(self, patient_id):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('get_billing_patient', (patient_id,))
+                billing = cursor.fetchall()
+            return billing
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
 
     def close_connection(self):
         # 关闭数据库连接

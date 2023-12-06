@@ -5,10 +5,10 @@ from db_operation import DatabaseManager
 db_manager = DatabaseManager()
 patient_bp = Blueprint('patient_bp', __name__)
 
-# get info of patient with patient_id
-@patient_bp.route('/<patient_id>', methods=['GET'])
-def get_patient(patient_id):
-    patient = db_manager.fetchPatient(patient_id)
+# get info of patient with username
+@patient_bp.route('/<username>', methods=['GET'])
+def get_patient(username):
+    patient = db_manager.fetchPatient(username)
     if patient:
         return jsonify(patient), 200
     else:

@@ -209,13 +209,14 @@ end $$
 delimiter ;
 
 
--- get patient information by patient id
+-- get patient information by username
 delimiter //
-Create procedure get_patient_info(in patt_id int)
+Create procedure get_patient_info(in p_username varchar(32))
 begin
-    Select *
+    Select name, DATE_FORMAT(date_of_birth, '%Y-%m-%d') as date_of_birth,
+    phone, street, city, state, zipcode, emergency_name, p_emergency_phone, username, biological_sex
     From Patient
-    Where patient_id = patt_id;
+    Where username = p_username;
 end;
 //
 delimiter ;
@@ -327,7 +328,7 @@ delimiter //
 
 create procedure get_employee_info(in employee_id int)
 begin
-    select name, date_of_birth, phone, street, city, state, zipcode, biological_sex, spe_name 
+    select name, DATE_FORMAT(date_of_birth, '%Y-%m-%d'), phone, street, city, state, zipcode, biological_sex, spe_name 
     from Employee 
     join specialty on specialty.spe_id = Employee.spe_id
     where emp_id = employee_id;
@@ -349,7 +350,7 @@ create procedure update_employee_info(
     in p_spe_name varchar(32)
 )
 begin
-    decalre v_spe_id int;
+    declare v_spe_id int;
     -- get the specialty id
     select spe_id into v_spe_id from specialty where spe_name = p_spe_name;
     -- update the employee record
@@ -361,7 +362,7 @@ begin
         street = p_street,
         city = p_city,
         state = p_state,
-        zipcode = p_zipcode
+        zipcode = p_zipcode,
         biological_sex = p_biological_sex,
         spe_id = spe_id
     where
@@ -418,26 +419,33 @@ END //
 DELIMITER ;
 
 
--- get all appointments for a patient by patient id
+-- get all appointments for a patient by patient id including the name of the doctor
 DELIMITER //
 
 Create PROCEDURE get_appoint_by_patId(in patt_id int)
 Begin
-    Select * from appointments 
+    Select appointment_no, DATE_FORMAT(app_date, '%Y-%m-%d') as app_date, TIME_FORMAT(app_time, '%H:%i:%s') as app_time, emp_id, Employee.name as doctor_name
+    from appointments
+    join Employee on appointments.doctor_id = Employee.emp_id
     where patient_id = patt_id
     order by app_date desc, app_time desc;
 End //
 
 DELIMITER ;
 
--- get all appointments for a doctor or nurse by employee id
+-- get all appointments for a doctor or nurse by employee id including the name of the patient
 -- if the employee is nurse, return appointments of the doctor he/she paired with
 DELIMITER //
 
 Create PROCEDURE get_appoint_by_empId(in employee_id int)
 Begin
-    Select * from appointments a join DoctorNursePair dnp on a.doctor_id = dnp.id
-    where dnp.doctor_id = employee_id or dnp.nurse_id = employee_id;
+    Select appointment_no, DATE_FORMAT(app_date, '%Y-%m-%d') as app_date, TIME_FORMAT(app_time, '%H:%i:%s') as app_time, a.patient_id, Patient.name 
+    from appointments a 
+    join DoctorNursePair dnp on a.doctor_id = dnp.doctor_id
+    left join Patient on a.patient_id = Patient.patient_id
+    where dnp.doctor_id = employee_id or dnp.nurse_id = employee_id
+    and app_date = CURRENT_DATE()
+    and patient_id is not null;
 End //
 
 DELIMITER ;
@@ -622,11 +630,15 @@ delimiter ;
 
 -- all billing for a patient
 delimiter $$
-create procedure billing_patient(
+create procedure get_billing_patient(
     in p_patient_id int
 )
 begin 
-    select * from Billing where patient_id = p_patient_id;
+    select amount, status, date_format(created_date, '%Y-%m-%d') as created_date, 
+    date_format(payment_date, '%Y-%m-%d') as payment_date
+    from Billing 
+    where patient_id = p_patient_id
+    order by created_date desc;
 end $$
 
 delimiter ;
@@ -634,7 +646,7 @@ delimiter ;
 -- manager view: all billing created in a certain time period
 delimiter $$
 
-create procedure billing_time(
+create procedure get_billing_time(
     in p_start_date date,
     in p_end_date date
 )
@@ -691,7 +703,7 @@ delimiter ;
 delimiter $$
 create procedure allMedication()
 begin
-    select med_name from Medication;
+    select medication_name from medication;
 end $$
 
 -- create medical record for a patient, it can not relate to any disease or medication

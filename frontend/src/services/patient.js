@@ -2,8 +2,8 @@ import axios from 'axios';
 
 class PatientDataService {
     // get info of patient by patient id
-    getPatient(patient_id) {
-        return axios.get(`${process.env.REACT_APP_API_BASE_URL}/patient/${patient_id}`);
+    getPatient(username) {
+        return axios.get(`${process.env.REACT_APP_API_BASE_URL}/patient/${username}`);
     }
 
     // update info of patient by patient id
