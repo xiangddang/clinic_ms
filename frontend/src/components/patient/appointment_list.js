@@ -21,14 +21,37 @@ const AppointmentList = ({ patientId }) => {
     }
   };
 
+  const handleCancelAppointment = async (appointmentId) => {
+    try {
+      // Send a request to the backend to cancel the appointment
+      const response = await fetch(`/api/appointments/${appointmentId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Update the state to remove the cancelled appointment
+        setAppointments((prevAppointments) =>
+          prevAppointments.filter((appointment) => appointment.appointmentId !== appointmentId)
+        );
+      } else {
+        console.error('Failed to cancel appointment');
+      }
+    } catch (error) {
+      console.error('Error cancelling appointment:', error);
+    }
+  };
+
   return (
     <div>
       <h2>Appointment List</h2>
-      {appointments.map(appointment => (
+      {appointments.map((appointment) => (
         <div key={appointment.appointmentId}>
           <p>Date: {appointment.date}</p>
           <p>Doctor: {appointment.doctorName}</p>
           {/* Add other appointment details */}
+          <button onClick={() => handleCancelAppointment(appointment.appointmentId)}>
+            Cancel
+          </button>
           <hr />
         </div>
       ))}
