@@ -19,8 +19,7 @@ class UserDataService {
         `${process.env.REACT_APP_API_BASE_URL}/user/register`,
         data
       );
-      console.log('Registration response:', response.data);
-      return response.data;
+      return response;
     } catch (error) {
       console.error('Error during user creation:', error);
       throw new Error('Failed to create user. Please try again.');

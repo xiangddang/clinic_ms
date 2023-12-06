@@ -7,34 +7,37 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleRegister = async () => {
     try {
-      // Validate input fields (you can add more validation logic)
-      if (!username || !email || !password) {
-        console.error("Please fill in all fields.");
-        return;
-      }
-      const data = {
-        "username": username,
-        "email": email,
-        "password": password
-      }
-      console.log(data)
-      // Send registration request to the server
-      const response = await UserDataService.createUser();
-      console.log(response);
+        // clear error message
+        setErrorMessage("");
 
-      // Check if the registration was successful based on your server response
-      if (data && data.success) {
-        // Example: navigate to the login page after successful registration
-        navigate("/login");
-      } else {
-        // Example: show an error message to the user
-        console.error("Registration failed. Please check your information.");
-      }
+        // Validate input fields
+        if (!username || !email || !password) {
+            setErrorMessage("Please fill in all fields."); // update error message
+            return;
+        }
+        const data = {
+            "username": username,
+            "email": email,
+            "password": password
+        };
+
+        // Send registration request to the server
+        const response = await UserDataService.createUser(data);
+        console.log(response)
+        // Check response status
+        if (response.status === 200) {
+            navigate("/login");
+        } else if (response.status === 400) {
+            setErrorMessage("Registration failed: Please check your information."); // update error message
+        } else {
+            setErrorMessage("Registration failed: Server error.");
+        }
     } catch (error) {
-      console.error("Error during registration:", error);
+        setErrorMessage("Error during registration: " + (error.message || "Unknown error")); // update error message
     }
   };
 
@@ -73,8 +76,9 @@ const Register = () => {
           Confirm
         </button>
       </form>
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
     </div>
   );
-};
+}; 
 
 export default Register;

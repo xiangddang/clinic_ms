@@ -38,7 +38,7 @@ def register():
     # create user
     success = db_manager.createPatientUser(username, password, email)
     if success:
-        return jsonify({'message': 'user created'}), 201
+        return jsonify({'message': 'user created'}), 200
     else:
         return jsonify({'error': 'failed to create user'}), 500
 
