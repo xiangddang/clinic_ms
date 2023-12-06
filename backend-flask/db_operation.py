@@ -69,11 +69,11 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return None        
     
-    # fetch information of an employee by employee_id
-    def fetchEmployee(self, employee_id):
+    # fetch information of an employee by username
+    def fetchEmployee(self, username):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.callproc('get_employee_info', (employee_id,))
+                cursor.callproc('get_employee_info', (username,))
                 employee = cursor.fetchone()
             return employee
         except pymysql.Error as e:
@@ -223,7 +223,7 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return None
 
-    # fetch all employees for admin to view
+    # fetch all active employees for admin to view
     def fetchAllEmployees(self):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -260,12 +260,34 @@ class DatabaseManager:
     def createEmployee(self, name, date_of_birth, phone, street, city, state, zipcode, start_date, role, spe_name, email):
         try:
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.callproc('create_employee', (name, date_of_birth, phone, street, city, state, zipcode, start_date, role, spe_name, email,))
+                cursor.callproc('CreateEmployeeUser', (name, date_of_birth, phone, street, city, state, zipcode, start_date, role, spe_name, email,))
             self.connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return False
+    
+    # delete an employee by employee_id
+    def deleteEmployee(self, employee_id):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('delete_employee', (employee_id,))
+            self.connection.commit()
+            return True
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return False
+    
+    # get billing for a specific time period for admin to view
+    def fetchBillingAdmin(self, start_date, end_date):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('get_billing_time', (start_date, end_date,))
+                billing = cursor.fetchall()
+            return billing
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
     
     def close_connection(self):
         # close connection

@@ -4,10 +4,10 @@ from db_operation import DatabaseManager
 db_manager = DatabaseManager()
 employee_bp = Blueprint('employee_bp', __name__)
 
-# get info of employee with employee_id
-@employee_bp.route('/<employee_id>', methods=['GET'])
-def get_employee(employee_id):
-    employee = db_manager.fetchEmployee(employee_id)
+# get info of employee with username
+@employee_bp.route('/<username>', methods=['GET'])
+def get_employee(username):
+    employee = db_manager.fetchEmployee(username)
     if employee:
         return jsonify(employee), 200
     else:
@@ -76,8 +76,12 @@ def create_medical_record(patient_id, doctor_id):
         return jsonify({'error': 'failed to create medical record'}), 500
 
 # add a diagnosis to a medical record
-@employee_bp.route('/diag/<medical_record_id>/<disease>', methods=['POST'])
-def create_diagnosis(medical_record_id, disease):
+@employee_bp.route('/diag/<medical_record_id>', methods=['POST'])
+def create_diagnosis(medical_record_id):
+    data = request.get_json()
+    if not ('disease' in data):
+        return jsonify({'error': 'Missing information'}), 400
+    disease = data.get('disease')
     create = db_manager.addDiagnosis(medical_record_id, disease)
     if create:
         return jsonify({'message': f'diagnosis created'}), 200

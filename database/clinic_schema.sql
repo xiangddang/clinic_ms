@@ -143,6 +143,7 @@ create table prescription (
     primary key (medical_records_no, medication_id),
     foreign key (medication_id) references medication(medication_id) on delete cascade on update cascade,
     foreign key (medical_records_no) references MedicalRecords(medical_records_no) on delete cascade on update cascade
+    check (duration > 0)
 );
 
 -- all user defined functions below
@@ -321,15 +322,15 @@ END $$
 
 DELIMITER ;
 
--- get information of employee by employee id
+-- get information of employee by username
 delimiter //
 
-create procedure get_employee_info(in employee_id int)
+create procedure get_employee_info(in p_username varchar(32))
 begin
     select name, DATE_FORMAT(date_of_birth, '%Y-%m-%d'), phone, street, city, state, zipcode, biological_sex, spe_name 
     from Employee 
     join specialty on specialty.spe_id = Employee.spe_id
-    where emp_id = employee_id;
+    where username = p_username;
 end //
 delimiter ;
 
@@ -402,7 +403,7 @@ BEGIN
         END IF;
 
         -- Delete the user account and update employee record
-        DELETE FROM users WHERE username = (SELECT username FROM employee WHERE emp_id = employee_id);
+        DELETE FROM User WHERE username = (SELECT username FROM employee WHERE emp_id = employee_id);
 
         UPDATE employee SET status = 'inactive', username = NULL WHERE emp_id = employee_id;
 
@@ -649,7 +650,12 @@ create procedure get_billing_time(
     in p_end_date date
 )
 begin
-    select * from billing where created_date >= p_start_date and created_date <= p_end_date;
+    select amount, status, date_format(created_date, '%Y-%m-%d') as created_date,
+    date_format(payment_date, '%Y-%m-%d') as payment_date,
+    Patient.name as patient_name
+    from billing 
+    join Patient on billing.patient_id = Patient.patient_id
+    where created_date >= p_start_date and created_date <= p_end_date;
 end $$
 
 delimiter ;
@@ -666,7 +672,7 @@ end $$
 
 delimiter ;
 
--- manager view: get all employee info
+-- manager view: get all active employee info
 delimiter $$
 create procedure get_all_employees()
 begin
@@ -675,6 +681,7 @@ begin
     status, is_manager, is_nurse, biological_sex, spe_name, username
     from Employee
     join specialty on specialty.spe_id = Employee.spe_id
+    where Employee.status = 'active'
     order by name;
 end $$
 delimiter ;
@@ -690,7 +697,7 @@ begin
     from appointments 
     left join Patient on appointments.patient_id = Patient.patient_id
     join Employee on appointments.doctor_id = Employee.emp_id
-    where patient_id is not null
+    where appointments.patient_id is not null
     order by app_date desc, app_time desc;
 end $$
 
@@ -698,7 +705,7 @@ end $$
 delimiter $$
 create procedure get_all_patients()
 begin
-    select patient, name, date_format(date_of_birth, '%Y-%m-%d') as date_of_birth,
+    select patient_id, name, date_format(date_of_birth, '%Y-%m-%d') as date_of_birth,
     phone, street, city, state, zipcode, emergency_name, emergency_phone, username, biological_sex
     from Patient
     order by name;
@@ -775,5 +782,7 @@ create procedure addPrescription(
     in p_duration int
 )
 begin
-    insert into Prescription values (p_medical_records_no, (select medication_id from medication where medication_name = p_medication_name), p_dosage, p_frequency, p_duration);
+    insert into Prescription values (p_medical_records_no, 
+    (select medication_id from medication where medication_name = p_medication_name), 
+    p_dosage, p_frequency, p_duration);
 end $$
