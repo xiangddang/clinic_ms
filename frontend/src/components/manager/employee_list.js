@@ -73,7 +73,7 @@ const EmployeeDetails = () => {
                 <p>Zipcode: {employee.zipcode}</p>
                 <p>Start date: {employee.start_date}</p>
                 <p>Role: {employee.is_doctor ? "Doctor": "Nurse"}</p>
-                <p>Biological Sex: {employee.biologicalSex}</p>
+                <p>Biological Sex: {employee.biological_sex}</p>
                 <p>Specialty: {employee.spe_name}</p>
                 <Button variant="danger" onClick={() => { setSelectedEmployee(employee.id); setShowDeleteModal(true); }}>
                   Delete Employee
