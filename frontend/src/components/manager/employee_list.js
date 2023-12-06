@@ -18,8 +18,10 @@ const EmployeeDetails = () => {
     try {
       setError('');
       const response = await ManageDataService.getEmployees();
-      if (response.status === 200) throw new Error('Error fetching employees');
-      const data = await response.json();
+
+      if (response.status !== 200) throw new Error('Error fetching employees');
+      const data = await response.data;
+      console.log(data);
       setEmployees(data);
     } catch (error) {
       setError(error.message);
@@ -29,12 +31,8 @@ const EmployeeDetails = () => {
   const handleAddEmployee = async () => {
     try {
       setError('');
-      const response = await fetch('/api/employees', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newEmployee),
-      });
-      if (!response.ok) throw new Error('Error creating employee');
+      const response = await ManageDataService.createEmployee(newEmployee);
+      if (response.status !== 200) throw new Error('Error creating employee');
       fetchAllEmployees();
       setShowAddModal(false);
     } catch (error) {
@@ -46,7 +44,7 @@ const EmployeeDetails = () => {
     try {
       setError('');
       const response = await fetch(`/api/employees/${selectedEmployee}`, { method: "DELETE" });
-      if (!response.ok) throw new Error('Error deleting employee');
+      if (response.status !== 200) throw new Error('Error deleting employee');
       fetchAllEmployees();
       setShowDeleteModal(false);
     } catch (error) {
@@ -64,13 +62,19 @@ const EmployeeDetails = () => {
       {error && <Alert variant="danger">{error}</Alert>}
       <Row className="mt-4">
         {employees.map(employee => (
-          <Col key={employee.id} md={4}>
+          <Col key={employee.emp_id} md={4}>
             <Card className="mb-3">
               <Card.Body>
                 <Card.Title>{employee.name}</Card.Title>
-                <p>Date of Birth: {employee.dateOfBirth}</p>
+                <p>Date of Birth: {employee.date_of_birth}</p>
+                <p>Phone: {employee.phone}</p>
+                <p>Street: {employee.street}</p>
+                <p>State: {employee.state}</p>
+                <p>Zipcode: {employee.zipcode}</p>
+                <p>Start date: {employee.start_date}</p>
+                <p>Role: {employee.is_doctor ? "Doctor": "Nurse"}</p>
                 <p>Biological Sex: {employee.biologicalSex}</p>
-                <p>Start Date: {employee.startDate}</p>
+                <p>Specialty: {employee.spe_name}</p>
                 <Button variant="danger" onClick={() => { setSelectedEmployee(employee.id); setShowDeleteModal(true); }}>
                   Delete Employee
                 </Button>
