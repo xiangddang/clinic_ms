@@ -1,7 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "../src/components/Login.js"; // 引入新的 Login 组件
 import PatientPage from "./components/routes/patientPage.js";
-import Manager from "./components/manager/manager_home.js";
+import Manager from "./components/routes/managerPage.js";
+
 
 import Register from "../src/components/Register.js";
 
@@ -13,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/employee/*' element={<EmployeePage />} />
         <Route path='/patient/*' element={<PatientPage />} />

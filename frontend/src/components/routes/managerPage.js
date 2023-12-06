@@ -7,7 +7,7 @@ function EmployeePage() {
     <div className="App">
       <Routes>
         <Route path='/' element={<Manager />} />
-        <Route path='/check_employee_list' element={<EmployeeDetails />} />
+        <Route path='/employee_list' element={<EmployeeDetails />} />
       </Routes>
     </div>
   );

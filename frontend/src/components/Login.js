@@ -5,43 +5,50 @@ import UserDataService from '../services/user';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // State for storing error messages
   const navigate = useNavigate();
 
-  const handleLogin = async() => {
-    // Ensure both username and password are provided
+  const handleLogin = async () => {
+    setErrorMessage(''); // Clear any existing error messages
     try {
       if (!username || !password) {
-        console.error('Please enter both username and password.');
+        setErrorMessage('Please enter both username and password.'); // Set error message
         return;
       }
-      
+
       const response = await UserDataService.getUser(username);
-      
+
       if (response.status === 200) {
         const data = response.data;
-        if (data.username === username && data.password === password) {
-          if (data.role === 'patient') {
-            navigate('/patient/${username}')
+        if (data.username) {
+          if (data.password === password) {
+            if (data.role === 'patient') {
+              navigate(`/patient/${username}`);
+            } else {
+              navigate(`/employee/${username}`);
+            }
           } else {
-            navigate('/employee/${username}')
+            setErrorMessage('Incorrect password.'); // Set error message for incorrect password
           }
+        } else {
+          setErrorMessage('Username does not exist.'); // Set error message for non-existent username
         }
       } else {
-        console.error('Error fetching user data:', response.statusText)
+        setErrorMessage('Error fetching user data.'); // Set a generic error message
       }
     } catch (error) {
-      console.error('An error occurred:', error.message);
+      setErrorMessage('An error occurred: ' + error.message); // Set error message for exceptions
     }
-  };  
+  };
 
   const handleRegister = () => {
-    // Navigate to the Register page
-    navigate('/register');
+    navigate('/register'); // Navigate to the Register page
   };
 
   return (
     <div>
       <h2>Login</h2>
+      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>} {/* Display error message */}
       <form>
         <label>
           Username:
