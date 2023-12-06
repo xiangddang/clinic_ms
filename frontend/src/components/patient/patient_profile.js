@@ -1,28 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import PatientDataService from '../../services/patient';
 
 const PatientProfile = () => {
-  const { patientId } = useParams();
+  const { username, patientId } = useParams();
+  const [profileData, setProfileData] = useState(null);
 
   // Dummy data (replace with actual data from API)
-  const profileData = {
-    name: 'John Doe',
-    dob: '01/01/1990',
-    sex: 'Male',
-    phone: '123-456-7890',
-    address: '123 Main St, Cityville',
-  };
+  useEffect(() => {
+    fetchPatientData(username);
+  }, [username]);
+
+  const fetchPatientData = async (username) => {
+    try {
+      const response = await PatientDataService.getPatient(username);
+      console.log(response.data)
+      setProfileData(response.data);
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
+    }
+  }
+  console.log(profileData)
 
   return (
     <div>
       <h2>Patient Profile</h2>
-      <ul>
-        <li>Name: {profileData.name}</li>
-        <li>Date of Birth: {profileData.dob}</li>
-        <li>Biological Sex: {profileData.sex}</li>
-        <li>Phone: {profileData.phone}</li>
-        <li>Address: {profileData.address}</li>
-      </ul>
+      {profileData ? (
+        <ul>
+          <li>Name: {profileData.name}</li>
+          <li>Date of Birth: {profileData.date_of_birth}</li>
+          <li>Biological Sex: {profileData.biological_sex}</li>
+          <li>Phone: {profileData.phone}</li>
+          <li>Address: {profileData.street}, {profileData.city}, {profileData.state}, {profileData.zipcode}</li>
+        </ul>
+      ) : (
+        <p>Loading patient data...</p>
+      )}
       <Link to={`/patient/profile/${patientId}/edit`} className="btn btn-primary">
         Edit Profile
       </Link>

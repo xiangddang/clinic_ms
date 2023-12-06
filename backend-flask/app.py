@@ -8,7 +8,7 @@ from manage import manage_bp
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app)
 
 app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(patient_bp, url_prefix='/patient')
