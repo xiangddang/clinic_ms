@@ -9,7 +9,7 @@ function PatientPage() {
   return (
     <div className="App">
       <Routes>
-        <Route path='/' element={<Patient />} />
+        <Route path='/:username' element={<Patient />} />
         
         <Route path="/profile/:patientId" element={<PatientProfile />} />
         <Route path="/profile/:patientId/edit" element={<EditProfile />} />

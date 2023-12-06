@@ -4,33 +4,32 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const BookAppointment = ({ show, handleClose }) => {
   // 状态：可用日期数组
-  const [availableDates, setAvailableDates] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState([]);
   // 状态：用户选择的日期和时间
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
   // 在组件挂载时，获取可用日期数据
   useEffect(() => {
-    fetchAvailableDates();
+    fetchAvailableSlots();
   }, []);
 
   // 从后端获取可用日期数据的函数
-  const fetchAvailableDates = async () => {
+  const fetchAvailableSlots = async () => {
     try {
       // 发送请求到后端获取可用日期数据
-      const response = await fetch("/api/available-dates");
+      const response = await fetch("/api/available-slots");
       const data = await response.json();
       // 设置可用日期数组的状态
-      setAvailableDates(data.availableDates);
+      setAvailableSlots(data.availableSlots);
     } catch (error) {
-      console.error("Error fetching available dates:", error);
+      console.error("Error fetching available slots:", error);
     }
   };
 
   // 处理确认按钮点击事件
   const handleConfirm = () => {
-    // 处理确认逻辑，可以将选定的日期和时间传递给后端进行处理
-    console.log("Confirmed:", selectedDate, selectedTime);
+    // 处理确认逻辑，可以将选定的slot传递给后端进行处理
+    console.log("Confirmed:", selectedSlot);
     // 关闭模态框
     handleClose();
   };
@@ -49,30 +48,21 @@ const BookAppointment = ({ show, handleClose }) => {
         <Modal.Title>Book Appointment</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {/* 选择日期 */}
-        <Form.Group controlId="formDate">
-          <Form.Label>Select Date</Form.Label>
+        {/* 选择日期和时间 */}
+        <Form.Group controlId="formDateTime">
+          <Form.Label>Select Date and Time</Form.Label>
           <Form.Control
             as="select"
-            onChange={(e) => setSelectedDate(e.target.value)}
+            onChange={(e) => setSelectedSlot(e.target.value)}
           >
-            <option value="">Select a date</option>
-            {/* 渲染可用日期选项 */}
-            {availableDates.map((date) => (
-              <option key={date} value={date}>
-                {date}
+            <option value="">Select a date and time</option>
+            {/* 渲染可用日期和时间选项 */}
+            {availableSlots.map((slot) => (
+              <option key={slot} value={slot}>
+                {slot}
               </option>
             ))}
           </Form.Control>
-        </Form.Group>
-
-        {/* 选择时间 */}
-        <Form.Group controlId="formTime">
-          <Form.Label>Select Time</Form.Label>
-          <Form.Control
-            type="time"
-            onChange={(e) => setSelectedTime(e.target.value)}
-          />
         </Form.Group>
       </Modal.Body>
       <Modal.Footer>
@@ -80,11 +70,11 @@ const BookAppointment = ({ show, handleClose }) => {
         <Button variant="secondary" onClick={handleCancel}>
           Cancel
         </Button>
-        {/* 确认按钮，只有在选择了日期时才可点击 */}
+        {/* 确认按钮，只有在选择了日期和时间时才可点击 */}
         <Button
           variant="primary"
           onClick={handleConfirm}
-          disabled={!selectedDate}
+          disabled={!selectedSlot}
         >
           Confirm
         </Button>

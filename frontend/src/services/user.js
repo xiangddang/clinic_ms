@@ -25,8 +25,6 @@ class UserDataService {
       throw new Error('Failed to create user. Please try again.');
     }
   }
-  
-  
 }
 
 /* eslint import/no-anonymous-default-export: [2, {"allowNew": true}] */
