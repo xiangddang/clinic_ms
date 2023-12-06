@@ -139,6 +139,28 @@ class DatabaseManager:
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None
+    
+    # fetch all medical records of a patient
+    def fetchMedicalRecords(self, patient_id):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('get_medical_records', (patient_id,))
+                records = cursor.fetchall()
+            return records
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+    
+    # cancel appointment for a patient
+    def cancelAppointment(self, app_id, patient_id):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('cancel_appointment', (app_id, patient_id))
+            self.connection.commit()
+            return True
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return False
 
     def close_connection(self):
         # 关闭数据库连接

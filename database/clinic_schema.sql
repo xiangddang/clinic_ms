@@ -456,7 +456,7 @@ DELIMITER ;
 
 DELIMITER //
 
-CREATE PROCEDURE delete_appointments(in p_app_no INT, in p_patt_id int)
+CREATE PROCEDURE cancel_appointment(in p_app_no INT, in p_patt_id int)
 BEGIN
     Declare this_patient_id int;
     declare combined_datetime datetime;
@@ -472,7 +472,7 @@ BEGIN
     FROM appointments
     WHERE appointment_no = p_app_no;
 
-    If this_patient_id is not NULL and combined_dataetime >= NOW() THEN
+    If this_patient_id is not NULL and combined_datetime >= NOW() THEN
         UPDATE appointments
         SET patient_id = NULL
         WHERE appointment_no = p_app_no;

@@ -68,3 +68,20 @@ def get_all_apps():
         return jsonify(apps), 200
     else:
         return jsonify({'error': 'record not found'}), 404
+    
+# get all medical records of patient with patient_id
+@patient_bp.route('/records/<patient_id>', methods=['GET'])
+def get_patient_records(patient_id):
+    records = db_manager.fetchMedicalRecords(patient_id)
+    if records:
+        return jsonify(records), 200
+    else:
+        return jsonify({'error': 'record not found'}), 404
+    
+# cancel appointment for patient with patient_id and app_id
+@patient_bp.route('/apps/<patient_id>/<app_id>', methods=['DELETE'])
+def cancel_app(patient_id, app_id):
+    if db_manager.cancelAppointment(app_id, patient_id):
+        return jsonify({'message': 'cancel successfully'}), 200
+    else:
+        return jsonify({'error': 'cancel failed'}), 404
