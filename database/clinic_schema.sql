@@ -786,3 +786,13 @@ begin
     (select medication_id from medication where medication_name = p_medication_name), 
     p_dosage, p_frequency, p_duration);
 end $$
+
+
+delimiter ;
+
+-- get all sprcialty
+delimiter $$
+create procedure get_all_specialty()
+begin
+    select spe_name from specialty;
+end $$
