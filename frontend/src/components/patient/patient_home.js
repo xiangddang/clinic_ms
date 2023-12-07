@@ -48,6 +48,13 @@ const Patient = () => {
   useEffect(() => {
     // 在组件挂载时获取病患的最近一次处方信息
     fetchLatestPrescription(patientId);
+          // Set up an interval to fetch the latest appointment every 10 minutes
+    const intervalId = setInterval(() => {
+      fetchLatestPrescription(patientId);
+    }, 10000); // 600000 milliseconds = 10 minutes
+        
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, [patientId]);
 
   const fetchLatestPrescription = async (patientId) => {
@@ -78,6 +85,13 @@ const Patient = () => {
   useEffect(() => {
     // Fetch the latest appointment when the component mounts
     fetchLatestAppointment(patientId);
+      // Set up an interval to fetch the latest appointment every 10 minutes
+    const intervalId = setInterval(() => {
+    fetchLatestAppointment(patientId);
+  }, 10000); // 600000 milliseconds = 10 minutes
+
+  // Clean up the interval when the component unmounts
+  return () => clearInterval(intervalId);
   }, [patientId]);
 
   const fetchLatestAppointment = async (patientId) => {
