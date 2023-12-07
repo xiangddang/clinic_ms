@@ -52,11 +52,23 @@ const Patient = () => {
   const fetchLatestPrescription = async (patientId) => {
     try {
       // 发送请求到后端获取病患的最近一次处方信息
-      const response = await PatientDataService.getAppointmentPatient(
+      const response = await PatientDataService.getMedicalRecords(
         patientId
       );
-      // 设置最近一次处方信息的状态
-      setLatestPrescription(response.latestPrescription);
+      const prescriptions = response.data;
+
+      if (prescriptions.length > 0) {
+        const latestPrescription = {
+          md_id: prescriptions[0].medical_records_no,
+          record_date: prescriptions[0].record_date,
+          disease: prescriptions[0].disease,
+          medication: prescriptions[0].medication,
+          prescription: prescriptions[0].prescriptions,
+        };
+        setLatestPrescription(latestPrescription);
+      } else {
+        setLatestPrescription(null);
+      }
     } catch (error) {
       console.error("Error fetching latest prescription:", error);
     }
@@ -136,11 +148,11 @@ const Patient = () => {
                 {/* 根据最近一次处方信息显示数据 */}
                 {latestPrescription ? (
                   <>
-                    <p>Date: {latestPrescription.date}</p>
+                    <p>Date: {latestPrescription.record_date}</p>
+                    <p>Disease: {latestAppointment.disease}</p>
+                    <p>Prescription: {latestAppointment.prescription}</p>
                     <p>Medication: {latestPrescription.medication}</p>
-                    <p>Dosage: {latestPrescription.dosage}</p>
-                    {/* 其他处方信息 */}
-                    <Link to={`/check_prescript/${patientId}`}>
+                    <Link to={`/check_prescript/${username}/${patientId}`}>
                       Check Details
                     </Link>
                   </>

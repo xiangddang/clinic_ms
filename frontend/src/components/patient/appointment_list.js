@@ -57,7 +57,7 @@ const AppointmentList = () => {
         <div key={appointment.appointment_no}>
           <p>Date: {appointment.app_date}</p>
           <p>Time: {appointment.app_time}</p>
-          <p>Doctor: {appointment.doctor_ame}</p>
+          <p>Doctor: {appointment.doctor_name}</p>
           {/* Add other appointment details */}
           <button
             onClick={() => handleCancelAppointment(appointment.appointment_no)}
