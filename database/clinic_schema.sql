@@ -41,13 +41,12 @@ create table Employee (
 
 -- doctor pair with nurse
 CREATE TABLE DoctorNursePair (
-    doctor_id INT primary key,
+    doctor_id INT not null,
     nurse_id INT default null, -- if the doctor is not paired with a nurse, then nurse_id is null
     pair_time TIMESTAMP,
     FOREIGN KEY (doctor_id) REFERENCES Employee(emp_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (nurse_id) REFERENCES Employee(emp_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    UNIQUE (doctor_id),
-    UNIQUE (nurse_id)
+    UNIQUE (doctor_id, nurse_id)
 );
 
 -- patient, when patient create its account, we will automatically create a patient record for him/her so details can be filled later
@@ -79,7 +78,7 @@ create table credit_card (
 
 -- billing
 create table billing(
-	bill_no int auto_increment primary key,
+	bill_no int auto_increment not null,
     amount decimal(10, 2) not null,
     status varchar(16) not null, -- paid, unpaid, overdue
     created_date date not null,
@@ -87,20 +86,22 @@ create table billing(
     pay_card int default null,
     patient_id int not null,
     foreign key (pay_card) references credit_card(card_id) on delete cascade on update cascade,
-    foreign key (patient_id) references Patient(patient_id) on delete cascade on update cascade
+    foreign key (patient_id) references Patient(patient_id) on delete cascade on update cascade,
+    unique(bill_no, patient_id)
 );
 
 
 -- appointment
 create table appointments (
-	appointment_no int auto_increment primary key,
+	appointment_no int auto_increment not null,
     app_date date not null,
     app_time time not null,
     patient_id int default null,
     doctor_id int not null,
     -- patient_id is null means the appointment is not scheduled
     foreign key (patient_id) references Patient(patient_id) on delete cascade on update cascade,
-    foreign key (doctor_id) references Employee(emp_id) on delete cascade on update cascade
+    foreign key (doctor_id) references Employee(emp_id) on delete cascade on update cascade,
+    unique(appointment_no, doctor_id)
 );
 
 -- medical records
@@ -111,19 +112,21 @@ create table disease(
 );
 
 create table MedicalRecords(
-	medical_records_no int auto_increment primary key,
+	medical_records_no int auto_increment not null,
     record_date date not null,
 	patient_id int not null,
     doctor_id int not null,
     foreign key (patient_id) references Patient(patient_id) on delete cascade on update cascade,
-    foreign key (doctor_id) references Employee(emp_id) on delete cascade on update cascade
+    foreign key (doctor_id) references Employee(emp_id) on delete cascade on update cascade,
+    unique(medical_records_no, patient_id)
 );
 
 create table diagnosis (
 	medical_records_no int not null,
+	patient_id int not null,
 	dis_id int not null,
-    primary key(medical_records_no, dis_id),
-    foreign key (medical_records_no) references MedicalRecords(medical_records_no) on delete cascade on update cascade,
+    unique(medical_records_no, dis_id, patient_id),
+    foreign key (medical_records_no, patient_id) references MedicalRecords(medical_records_no, patient_id) on delete cascade on update cascade,
     foreign key (dis_id) references disease(dis_id) on delete cascade on update cascade
 );
 
@@ -135,13 +138,14 @@ create table medication (
 
 create table prescription (
 	medical_records_no int not null,
+    patient_id int not null,
     medication_id int not null,
     dosage varchar(100), -- eg. 500 mg or 2 tablets,
     frequency varchar(50),
     duration int, -- unit days
-    primary key (medical_records_no, medication_id),
+    unique(medical_records_no, medication_id, patient_id),
     foreign key (medication_id) references medication(medication_id) on delete cascade on update cascade,
-    foreign key (medical_records_no) references MedicalRecords(medical_records_no) on delete cascade on update cascade,
+    foreign key (medical_records_no, patient_id) references MedicalRecords(medical_records_no, patient_id) on delete cascade on update cascade,
     check (duration > 0)
 );
 
@@ -740,7 +744,7 @@ BEGIN
     JOIN prescription p ON mr.medical_records_no = p.medical_records_no
     JOIN medication m ON p.medication_id = m.medication_id
     WHERE mr.patient_id = p_patient_id
-    GROUP BY mr.medical_records_no
+    GROUP BY mr.medical_records_no, mr.record_date
     ORDER BY mr.record_date DESC;
 END$$
 
