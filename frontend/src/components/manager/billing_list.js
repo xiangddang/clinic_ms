@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Table, Form, Button } from "react-bootstrap";
 import ManageDataService from "../../services/manage.js";
 
@@ -54,7 +54,7 @@ const BillingList = () => {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </Form.Group>
-        <Button type="submit">Search</Button>
+        <Button type="submit" style={{ marginTop: '20px'}}>Search</Button>
       </Form>
       <Table striped bordered hover className="mt-3">
         <thead>

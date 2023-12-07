@@ -7,6 +7,7 @@ employee_bp = Blueprint('employee_bp', __name__)
 # get info of employee with username
 @employee_bp.route('/<username>', methods=['GET'])
 def get_employee(username):
+    print(username)
     employee = db_manager.fetchEmployee(username)
     if employee:
         return jsonify(employee), 200

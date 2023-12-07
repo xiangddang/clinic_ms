@@ -14,6 +14,11 @@ class PatientDataService {
         );
     }
 
+    // get medical records of the patient by patient id
+    getMedicalRecords(patient_id) {
+        return axios.get(`${process.env.REACT_APP_API_BASE_URL}/patient/records/${patient_id}`);
+    }
+
     // get all appointments of the patient by patient id
     getAppointmentPatient(patient_id) {
         return axios.get(`${process.env.REACT_APP_API_BASE_URL}/patient/apps/${patient_id}`);

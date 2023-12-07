@@ -442,9 +442,9 @@ Begin
     from appointments a 
     join DoctorNursePair dnp on a.doctor_id = dnp.doctor_id
     left join Patient on a.patient_id = Patient.patient_id
-    where dnp.doctor_id = employee_id or dnp.nurse_id = employee_id
-    and app_date = CURRENT_DATE()
-    and patient_id is not null;
+    where (dnp.doctor_id = employee_id or dnp.nurse_id = employee_id)
+    -- and app_date = CURRENT_DATE()
+    and a.patient_id is not null;
 End //
 
 DELIMITER ;

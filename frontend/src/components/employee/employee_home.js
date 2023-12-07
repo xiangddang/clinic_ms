@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Navbar, Nav, Container, Row, Col, Card } from "react-bootstrap";
+import { Navbar, Nav, Container, Row, Col, Card, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import EmployeeDataService from '../../services/employee';
 import '../shared/navbar.css';
@@ -10,7 +10,7 @@ const Employee = () => {
 
   const [appointments, setAppointments] = useState([]);
 
-  const [profileData, setProfileData] = useState(null);
+  const [employeeId, setEmoloyeeId] = useState(null);
 
   // Dummy data (replace with actual data from API)
   useEffect(() => {
@@ -20,28 +20,42 @@ const Employee = () => {
   const fetchEmployeeData = async (username) => {
     try {
       const response = await EmployeeDataService.getEmployee(username);
+
+      if (response.status !== 200) {
+        throw new Error('Failed to fetch employee data');
+      }
+
       console.log(response.data)
-      setProfileData(response.data);
+      setEmoloyeeId(response.data.emp_id);
     } catch (error) {
       console.error('Error fetching patient data:', error);
     }
-  }
-  const employeeId = profileData ? profileData.emp_id : null;
+  };
+
   console.log(employeeId);
 
   useEffect(() => {
     // Fetch appointments for today when the component mounts
     fetchAppointmentsForToday();
-  }, []);
+  }, [employeeId]);
 
   const fetchAppointmentsForToday = async () => {
     try {
+      // Ensure employeeId is available before making the request
+      if (!employeeId) return;
+  
       // Fetch appointments for today from the backend
-      const response = await fetch(`/api/appointments/today`);
-      const data = await response.json();
-      setAppointments(data.appointments);
+      const response = await EmployeeDataService.getAppointmentEmployee(employeeId);
+      console.log(response.data)
+      if (response.status !== 200) {
+        throw new Error('Failed to fetch appointments');
+      }
+  
+      // Assuming response.data contains the appointments array
+      setAppointments(response.data);
     } catch (error) {
       console.error('Error fetching appointments for today:', error);
+      setAppointments([]); // Set to empty array in case of error
     }
   };
 
@@ -68,22 +82,31 @@ const Employee = () => {
           <Col>
             <Card>
               <Card.Body>
-                <Card.Title>Check out your today's schedule here.</Card.Title>
+                <Card.Title>Today's Schedule</Card.Title>
                 {appointments.length > 0 ? (
-                  <ul>
-                    {appointments.map(appointment => (
-                      <li key={appointment.id}>
-                        <p>Date: {appointment.date}</p>
-                        <p>Time: {appointment.time}</p>
-                        <p>Patient: 
-                          <Link to={`/check_medical_by_pid/${patientId}`}>
-                            {appointment.patientName}
-                          </Link>
-                        </p>
-                        {/* Add other appointment details */}
-                      </li>
-                    ))}
-                  </ul>
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Patient</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {appointments.map(appointment => (
+                        <tr key={appointment.appointment_no}>
+                          <td>{appointment.app_date}</td>
+                          <td>{appointment.app_time}</td>
+                          <td>
+                            <Link to={`/employee/check_medical_rec/${appointment.patient_id}`}>
+                              {appointment.name}
+                            </Link>
+                          </td>
+                          {/* Add more columns if needed */}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
                 ) : (
                   <p>No appointments for today.</p>
                 )}
