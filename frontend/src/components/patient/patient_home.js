@@ -53,10 +53,9 @@ const Patient = () => {
   const fetchLatestPrescription = async (patientId) => {
     try {
       // 发送请求到后端获取病患的最近一次处方信息
-      const response = await fetch(`/api/prescription/${patientId}/latest`);
-      const data = await response.json();
+      const response = await PatientDataService.getAppointmentPatient(patientId);
       // 设置最近一次处方信息的状态
-      setLatestPrescription(data.latestPrescription);
+      setLatestPrescription(response.latestPrescription);
     } catch (error) {
       console.error("Error fetching latest prescription:", error);
     }

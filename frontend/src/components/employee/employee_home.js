@@ -1,14 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Navbar, Nav, Container, Row, Col, Card } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import EmployeeDataService from '../../services/employee';
 import '../shared/navbar.css';
 
 const Employee = () => {
-    // temp patientID
-  const patientId = "123";
-  const employeeId = '789';
+  const { username } = useParams();
+
   const [appointments, setAppointments] = useState([]);
+
+  const [profileData, setProfileData] = useState(null);
+
+  // Dummy data (replace with actual data from API)
+  useEffect(() => {
+    fetchEmployeeData(username);
+  }, [username]);
+
+  const fetchEmployeeData = async (username) => {
+    try {
+      const response = await EmployeeDataService.getEmployee(username);
+      console.log(response.data)
+      setProfileData(response.data);
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
+    }
+  }
+  const employeeId = profileData ? profileData.emp_id : null;
+  console.log(employeeId);
 
   useEffect(() => {
     // Fetch appointments for today when the component mounts
@@ -36,7 +55,7 @@ const Employee = () => {
             <Nav.Link as={Link} to="/employee">
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to={`/employee/profile/${employeeId}`}>
+            <Nav.Link as={Link} to={`/employee/profile/${username}/${employeeId}`}>
               Profile
             </Nav.Link>
           </Nav>

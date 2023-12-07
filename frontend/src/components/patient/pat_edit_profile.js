@@ -9,10 +9,15 @@ const EditProfile = () => {
   const [profileData, setProfileData] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
-    dob: "",
-    sex: "",
+    date_of_birth: "",
+    biological_sex: "",
     phone: "",
-    address: "",
+    street: "",
+    city: "",
+    state: "",
+    zipcode: "",
+    emergency_name: "",
+    emergency_phone: "",
   });
 
   // Dummy data (replace with actual data from API)

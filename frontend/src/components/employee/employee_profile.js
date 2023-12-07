@@ -1,32 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import EmployeeDataService from '../../services/employee';
 
 const EmployeeProfile = () => {
-  const { employeeId } = useParams();
+  const { username, employeeId } = useParams();
+  const [profileData, setProfileData] = useState(null);
 
-  // Dummy data (replace with actual data from API)
-  const profileData = {
-    name: 'John Doe',
-    dob: '01/01/1990',
-    sex: 'Male',
-    start_date: '01/01/2020',
-    phone: '123-456-7890',
-    address: '123 Main St, Cityville',
-  };
+    // Dummy data (replace with actual data from API)
+    useEffect(() => {
+      fetchEmployeeData(username);
+    }, [username]);
+  
+    const fetchEmployeeData = async (username) => {
+      try {
+        const response = await EmployeeDataService.getEmployee(username);
+        console.log(response.data)
+        setProfileData(response.data);
+      } catch (error) {
+        console.error('Error fetching patient data:', error);
+      }
+    }
+    console.log(profileData)
 
   return (
     <div>
       <h2>Employee Profile</h2>
+      {profileData ? (
       <ul>
         <li>Name: {profileData.name}</li>
-        <li>Date of Birth: {profileData.dob}</li>
+        <li>Date of Birth: {profileData.date_of_birth}</li>
         <li>Biological Sex: {profileData.sex}</li>
-        <li>Start Date: {profileData.start_date}</li>
+        <li>Specialty Name: {profileData.spe_name}</li>
         <li>Phone: {profileData.phone}</li>
-        <li>Address: {profileData.address}</li>
+        <li>Address: {profileData.street}, {profileData.city}, {profileData.state}, {profileData.zipcode}</li>
       </ul>
-      <Link to={`/employee/profile/${employeeId}/edit`} className="btn btn-primary">
+      ) : (
+        <p>Loading patient data...</p>
+      )}
+      <Link to={`/employee/profile/${username}/${employeeId}/edit`} className="btn btn-primary">
         Edit Profile
+      </Link>
+      <Link to={`/employee/${username}`} className="btn btn-primary">
+        Back
       </Link>
     </div>
   );
