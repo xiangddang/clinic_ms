@@ -38,11 +38,13 @@ const EditProfile = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const handleConfirm = async () => {
     try {
       const response = await PatientDataService.updatePatient(patientId, formData);
       console.log("Profile updated successfully:", response.data);
       setProfileData(response.data);
+      setUpdateSuccess(true);
     } catch (error) {
       console.error("Error updating patient data:", error);
     }
@@ -53,6 +55,7 @@ const EditProfile = () => {
       <Row>
         <Col md={{ span: 6, offset: 3 }}>
           <h2 className="text-center mt-4">Edit Profile</h2>
+          
           <Form>
             {/* Form Fields */}
             {Object.keys(formData).map((key, index) => (
@@ -75,11 +78,19 @@ const EditProfile = () => {
               </Button>
               <Link to={`/patient/profile/${username}/${patientId}`}>
                 <Button variant="secondary" type="button">
-                  Cancel
+                  Back
                 </Button>
               </Link>
             </div>
           </Form>
+
+          {/* Success Message */}
+          {updateSuccess && (
+            <div className="alert alert-success mt-3" role="alert">
+              Profile updated successfully!
+            </div>
+          )}
+          
         </Col>
       </Row>
     </Container>
