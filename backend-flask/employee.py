@@ -106,3 +106,12 @@ def create_prescprition(medical_record_id):
         return jsonify({'message': f'prescription created'}), 200
     else:
         return jsonify({'error': 'failed to create prescription'}), 500
+
+# get all specialties to choose from
+@employee_bp.route('/spe', methods=['GET'])
+def get_specialties():
+    specialties = db_manager.fetchAllSpecialties()
+    if specialties:
+        return jsonify(specialties), 200
+    else:
+        return jsonify({'error': 'specialty record not found'}), 404

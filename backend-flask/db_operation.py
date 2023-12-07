@@ -1,6 +1,7 @@
 import pymysql
 import os
 from dotenv import load_dotenv
+import datetime
 
 # connect to database
 import pymysql
@@ -281,10 +282,27 @@ class DatabaseManager:
     # get billing for a specific time period for admin to view
     def fetchBillingAdmin(self, start_date, end_date):
         try:
+            # Convert start_date and end_date to datetime objects if they are not already
+            if not isinstance(start_date, datetime.date):
+                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+            if not isinstance(end_date, datetime.date):
+                end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+
             with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
                 cursor.callproc('get_billing_time', (start_date, end_date,))
                 billing = cursor.fetchall()
             return billing
+        except pymysql.Error as e:
+            print(f"Database error: {str(e)}")
+            return None
+    
+    # get all specialties for employee and adnmin to choose
+    def fetchAllSpecialties(self):
+        try:
+            with self.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.callproc('get_all_specialty')
+                specialties = cursor.fetchall()
+            return specialties
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None

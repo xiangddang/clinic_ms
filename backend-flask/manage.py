@@ -72,16 +72,9 @@ def delete_employee(employee_id):
         return jsonify({'error': 'failed to delete employee'}), 500
     
 # get billing information for a specific time period
-@manage_bp.route('/bill', methods=['GET'])
-def get_billing():
-    data = request.get_json()
-    if not ('start_date' in data and 'end_date' in data):
-        return jsonify({'error': 'missing info'}), 400
-    
-    start_date = data['start_date']
-    end_date = data['end_date']
-    
-    billing = db_manager.fetchBilling(start_date, end_date)
+@manage_bp.route('/bill/<start_date>/<end_date>', methods=['GET'])
+def get_billing(start_date, end_date):
+    billing = db_manager.fetchBillingAdmin(start_date, end_date)
     if billing:
         return jsonify(billing), 200
     else:

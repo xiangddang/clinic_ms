@@ -43,6 +43,11 @@ class EmployeeDataService {
     addPrescription(medrec_id, data) {
         return axios.put(`${process.env.REACT_APP_API_BASE_URL}/employee/pres/${medrec_id}`, data);
     }
+
+    // get all specialities to choose from
+    getSpecialties() {
+        return axios.get(`${process.env.REACT_APP_API_BASE_URL}/employee/spe`);
+    }
 }
 
 /* eslint import/no-anonymous-default-export: [2, {"allowNew": true}] */

@@ -27,8 +27,8 @@ class ManageDataService {
     }
 
     // get billing info for a time period
-    getBillingInfo(data) {
-        return axios.post(`${process.env.REACT_APP_API_BASE_URL}/manage/bill`, data);
+    getBillingInfo(start_date, end_date) {
+        return axios.get(`${process.env.REACT_APP_API_BASE_URL}/manage/bill/${start_date}/${end_date}`);
     }
 }
 
