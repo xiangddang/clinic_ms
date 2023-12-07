@@ -327,7 +327,7 @@ delimiter //
 
 create procedure get_employee_info(in p_username varchar(32))
 begin
-    select name, DATE_FORMAT(date_of_birth, '%Y-%m-%d'), phone, street, city, state, zipcode, biological_sex, spe_name 
+    select Employee.emp_id, name, DATE_FORMAT(date_of_birth, '%Y-%m-%d'), phone, street, city, state, zipcode, biological_sex, spe_name 
     from Employee 
     join specialty on specialty.spe_id = Employee.spe_id
     where username = p_username;
@@ -667,7 +667,9 @@ create procedure payment_time(
     in p_end_date date
 )
 begin
-    select sum(amount) from billing where payment_date >= p_start_date and payment_date <= p_end_date;
+    select sum(amount) from billing 
+    where payment_date >= p_start_date and payment_date <= p_end_date
+    order by payment_date desc;
 end $$
 
 delimiter ;

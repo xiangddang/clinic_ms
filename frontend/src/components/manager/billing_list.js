@@ -11,13 +11,17 @@ const BillingList = () => {
   const fetchBillingData = async () => {
     try {
       setError("");
-      console.log(startDate, endDate)
-      const response = await ManageDataService.getBillingInfo({ startDate, endDate });
 
+      const data = {
+        "start_date": startDate,
+        "end_date": endDate
+      }
+      
+      const response = await ManageDataService.getBillingInfo(data);
       if (response.status !== 200) {
         throw new Error("Error fetching billing data");
       }
-
+      console.log(response.data)
       setBillings(response.data);
     } catch (error) {
       setError(error.message || "Failed to fetch billing data");
@@ -53,7 +57,26 @@ const BillingList = () => {
         <Button type="submit">Search</Button>
       </Form>
       <Table striped bordered hover className="mt-3">
-        {/* Table content as before */}
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Patient Name</th>
+            <th>Service Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {billings.map((billing, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{billing.patient_name}</td>
+              <td>{billing.created_date}</td>
+              <td>{billing.amount}</td>
+              <td>{billing.status}</td>
+            </tr>
+          ))}
+        </tbody>
       </Table>
       {error && <div>Error: {error}</div>}
     </Container>
