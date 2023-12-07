@@ -43,7 +43,7 @@ const EmployeeDetails = () => {
     try {
       setError("");
       const response = await ManageDataService.getEmployees();
-
+      console.log(response.data)
       // Assuming the response is successful, set the employees data
       setEmployees(response.data);
     } catch (error) {

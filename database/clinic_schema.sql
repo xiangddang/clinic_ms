@@ -5,7 +5,7 @@ use clinic;
 create table User (
 	username varchar(32) primary key,
     password varchar(32) not null,
-    role enum('patient', 'employee') not null,
+    role enum('patient', 'employee', 'manager') not null,
     email varchar(64) not null
 );
 
@@ -29,7 +29,6 @@ create table Employee (
     zipcode char(5) not null,
     start_date date not null,
     status enum('active', 'invalid') default 'active', -- if the employee resign, mark as inactive
-    is_manager bool default false,
     is_doctor bool default false,
     is_nurse bool default false,
     biological_sex enum('male', 'female') not null,
@@ -267,7 +266,6 @@ CREATE PROCEDURE CreateEmployeeUser(
 BEGIN
     DECLARE generated_username VARCHAR(32);
     DECLARE default_password VARCHAR(32) DEFAULT 'clinic123';
-    DECLARE v_is_manager BOOL DEFAULT FALSE;
     DECLARE v_is_doctor BOOL DEFAULT FALSE;
     DECLARE v_is_nurse BOOL DEFAULT FALSE;
     DECLARE v_spe_id INT;
@@ -282,9 +280,7 @@ BEGIN
     SET generated_username = CONCAT(LEFT(p_name, 1), DATE_FORMAT(p_date_of_birth, '%Y%m%d'));
 
     -- based on role, set corresponding boolean value
-    IF p_role = 'manager' THEN
-        SET v_is_manager = TRUE;
-    ELSEIF p_role = 'doctor' THEN
+    IF p_role = 'doctor' THEN
         SET v_is_doctor = TRUE;
     ELSEIF p_role = 'nurse' THEN
         SET v_is_nurse = TRUE;
@@ -304,8 +300,8 @@ BEGIN
     VALUES (generated_username, default_password, 'employee', p_email);
 
     -- insert employee information
-    INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, is_manager, is_doctor, is_nurse, spe_id, username)
-    VALUES (p_name, p_date_of_birth, p_phone, p_street, p_city, p_state, p_zipcode, p_start_date, v_is_manager, v_is_doctor, v_is_nurse, v_spe_id, generated_username);
+    INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, is_doctor, is_nurse, spe_id, username)
+    VALUES (p_name, p_date_of_birth, p_phone, p_street, p_city, p_state, p_zipcode, p_start_date, v_is_doctor, v_is_nurse, v_spe_id, generated_username);
 
     -- get the generated employee id
     SET v_emp_id = LAST_INSERT_ID();
@@ -693,7 +689,7 @@ create procedure get_all_employees()
 begin
     select emp_id, name, date_format(date_of_birth, '%Y-%m-%d') as date_of_birth,
     phone, street, city, state, zipcode, date_format(start_date, '%Y-%m-%d') as start_date,
-    status, is_manager, is_nurse, biological_sex, spe_name, username
+    status, is_doctor, is_nurse, biological_sex, spe_name, username
     from Employee
     join specialty on specialty.spe_id = Employee.spe_id
     where Employee.status = 'active'

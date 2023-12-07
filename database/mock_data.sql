@@ -5,7 +5,7 @@ INSERT INTO User (username, password, role, email) VALUES ('johndoe', 'password1
 INSERT INTO User (username, password, role, email) VALUES ('janedoe', 'password123', 'patient', 'janedoe@example.com');
 INSERT INTO User (username, password, role, email) VALUES ('drsmith', 'password123', 'employee', 'drsmith@example.com');
 INSERT INTO User (username, password, role, email) VALUES ('nursejones', 'password123', 'employee', 'nursejones@example.com');
-INSERT INTO User (username, password, role, email) VALUES ('adminuser', 'adminpass', 'employee', 'admin@example.com');
+INSERT INTO User (username, password, role, email) VALUES ('adminuser', 'adminpass', 'manager', 'admin@example.com');
 
 
 -- insert data into speciality
@@ -28,14 +28,14 @@ INSERT INTO specialty (spe_name, spe_discription) VALUES ('Psychiatry',
 
 -- insert data into Employee
 INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, status, 
-is_manager, is_doctor, is_nurse, biological_sex, spe_id, username) VALUES 
+is_doctor, is_nurse, biological_sex, spe_id, username) VALUES 
 ('Dr. Alice Smith', '1980-04-15', '1234567890', '123 Main St', 'Medville', 'CA', '90210', '2023-11-01', 'active', 
- False, True, False, 'female', 1, 'drsmith');
+ True, False, 'female', 1, 'drsmith');
 
 INSERT INTO Employee (name, date_of_birth, phone, street, city, state, zipcode, start_date, status,
-is_manager, is_doctor, is_nurse, biological_sex, spe_id, username) VALUES 
+is_doctor, is_nurse, biological_sex, spe_id, username) VALUES 
 ('Nurse Bob Johnson', '1985-08-20', '2345678901', '456 Side Rd', 'Nursville', 'TX', '75001', '2023-11-01', 'active', 
- False, False, True, 'male', 1, 'nursejones');
+ False, True, 'male', 1, 'nursejones');
  
 -- insert data into DoctorNursePair
 INSERT INTO DoctorNursePair (doctor_id, nurse_id, pair_time) VALUES 
