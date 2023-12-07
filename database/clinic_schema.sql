@@ -514,7 +514,6 @@ BEGIN
     IF this_patient_id IS NULL THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Appointment not found or does not belong to the patient', MYSQL_ERRNO = 3004;
-        LEAVE proc;
     END IF;
 
     -- Get the exact time of the appointment
@@ -526,14 +525,12 @@ BEGIN
     IF combined_datetime IS NULL THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Invalid appointment date or time', MYSQL_ERRNO = 3006;
-        LEAVE proc;
     END IF;
 
     -- Check if appointment is in the future
     IF combined_datetime < NOW() THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Cannot cancel past appointments', MYSQL_ERRNO = 3005;
-        LEAVE proc;
     END IF;
 
     -- Proceed to cancel the appointment
@@ -543,8 +540,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
-
 
 -- create appointment for an active doctor for a specific day
 

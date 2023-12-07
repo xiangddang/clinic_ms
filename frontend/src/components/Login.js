@@ -1,54 +1,61 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserDataService from '../services/user';
+import EmployeeDataService from '../services/employee'; // Assuming you have a service to get employee data
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // State for storing error messages
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    setErrorMessage(''); // Clear any existing error messages
+    setErrorMessage('');
     try {
       if (!username || !password) {
-        setErrorMessage('Please enter both username and password.'); // Set error message
+        setErrorMessage('Please enter both username and password.');
         return;
       }
 
-      const response = await UserDataService.getUser(username);
+      const userResponse = await UserDataService.getUser(username);
 
-      if (response.status === 200) {
-        const data = response.data;
-        if (data.username) {
-          if (data.password === password) {
-            if (data.role === 'patient') {
-              navigate(`/patient/${username}`);
+      if (userResponse.status === 200) {
+        const userData = userResponse.data;
+        if (userData.username && userData.password === password) {
+          if (userData.role === 'patient') {
+            navigate(`/patient/${username}`);
+          } else if (userData.role === 'employee') {
+            const employeeResponse = await EmployeeDataService.getEmployee(username);
+            if (employeeResponse.status === 200) {
+              const employeeData = employeeResponse.data;
+              if (employeeData.is_manager) {
+                navigate('/manager'); // Navigate to manager page if is_manager is true
+              } else {
+                navigate(`/employee/${username}`);
+              }
             } else {
-              navigate(`/employee/${username}`);
+              setErrorMessage('Error fetching employee data.');
             }
-          } else {
-            setErrorMessage('Incorrect password.'); // Set error message for incorrect password
           }
         } else {
-          setErrorMessage('Username does not exist.'); // Set error message for non-existent username
+          setErrorMessage('Incorrect username or password.');
         }
       } else {
-        setErrorMessage('Error fetching user data.'); // Set a generic error message
+        setErrorMessage('Error fetching user data.');
       }
     } catch (error) {
-      setErrorMessage('An error occurred: ' + error.message); // Set error message for exceptions
+      setErrorMessage('An error occurred: ' + error.message);
     }
   };
 
   const handleRegister = () => {
-    navigate('/register'); // Navigate to the Register page
+    navigate('/register');
   };
 
   return (
     <div>
       <h2>Login</h2>
-      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>} {/* Display error message */}
+      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
       <form>
         <label>
           Username:
