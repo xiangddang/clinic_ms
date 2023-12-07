@@ -142,7 +142,7 @@ create table prescription (
     duration int, -- unit days
     primary key (medical_records_no, medication_id),
     foreign key (medication_id) references medication(medication_id) on delete cascade on update cascade,
-    foreign key (medical_records_no) references MedicalRecords(medical_records_no) on delete cascade on update cascade
+    foreign key (medical_records_no) references MedicalRecords(medical_records_no) on delete cascade on update cascade,
     check (duration > 0)
 );
 
@@ -213,7 +213,7 @@ delimiter //
 Create procedure get_patient_info(in p_username varchar(32))
 begin
     Select name, DATE_FORMAT(date_of_birth, '%Y-%m-%d') as date_of_birth,
-    phone, street, city, state, zipcode, emergency_name, emergency_phone, username, biological_sex
+    patient_id, phone, street, city, state, zipcode, emergency_name, emergency_phone, username, biological_sex
     From Patient
     Where username = p_username;
 end;
