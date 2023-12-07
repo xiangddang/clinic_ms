@@ -323,7 +323,7 @@ delimiter //
 
 create procedure get_employee_info(in p_username varchar(32))
 begin
-    select Employee.emp_id, name, DATE_FORMAT(date_of_birth, '%Y-%m-%d'), phone, street, city, state, zipcode, biological_sex, spe_name 
+    select Employee.emp_id, name, DATE_FORMAT(date_of_birth, '%Y-%m-%d') as date_of_birth, phone, street, city, state, zipcode, biological_sex, spe_name, is_doctor, is_nurse
     from Employee 
     join specialty on specialty.spe_id = Employee.spe_id
     where username = p_username;
@@ -359,7 +359,7 @@ begin
         state = p_state,
         zipcode = p_zipcode,
         biological_sex = p_biological_sex,
-        spe_id = spe_id
+        spe_id = v_spe_id
     where
         emp_id = p_employee_id;
 end $$
@@ -733,7 +733,7 @@ BEGIN
         mr.record_date, 
         GROUP_CONCAT(distinct d.dis_name order by d.dis_name separator ', ') AS disease,
         GROUP_CONCAT(distinct m.medication_name order by m.medication_name separator ',') as medication,
-        GROUP_CONCAT(distinct CONCAT(p.dosage, ' ', p.frequency, 'for', p.duration, ' days') order by p.medication_id separator '; ') as prescriptions
+        GROUP_CONCAT(distinct CONCAT(p.dosage, ' ', p.frequency, ' for ', p.duration, ' days') order by p.medication_id separator '; ') as prescriptions
     FROM MedicalRecords mr
     LEFT JOIN diagnosis dg ON mr.medical_records_no = dg.medical_records_no
     JOIN disease d ON dg.dis_id = d.dis_id

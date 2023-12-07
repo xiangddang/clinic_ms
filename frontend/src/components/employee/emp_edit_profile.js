@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import EmployeeDataService from '../../services/employee';
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import EmployeeDataService from "../../services/employee";
 
 const EditProfile = () => {
   const { username, employeeId } = useParams();
-  console.log(username);
-  console.log(employeeId);
   const [profileData, setProfileData] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -16,18 +15,37 @@ const EditProfile = () => {
     city: "",
     state: "",
     zipcode: "",
-    specialty_name: "",
+    spe_name: "",
   });
+  const navigate = useNavigate();
+
+  const [specialties, setSpecialties] = useState([]);
+
+  const fetchAllSpecialties = async () => {
+    try {
+      const response = await EmployeeDataService.getSpecialties();
+
+      // Set the specialties data
+      setSpecialties(response.data);
+    } catch (error) {
+      // Handle any errors that occur during the request
+      console.log(error);
+    }
+  };
+
 
   // Dummy data (replace with actual data from API)
   useEffect(() => {
     fetchEmployeeData(username);
   }, [username]);
 
+  useEffect(() => {
+    fetchAllSpecialties();
+  }, []);
+
   const fetchEmployeeData = async (username) => {
     try {
-      const response = await EmployeeDataService.getPatient(username);
-      console.log(response.data);
+      const response = await EmployeeDataService.getEmployee(username);
       setProfileData(response.data);
       // Set initial form data
       setFormData({
@@ -39,140 +57,172 @@ const EditProfile = () => {
         city: response.data.city,
         state: response.data.state,
         zipcode: response.data.zipcode,
-        specialty_name: response.data.spe_name,
+        spe_name: response.data.spe_name,
       });
     } catch (error) {
       console.error("Error fetching employee data:", error);
     }
   };
 
-  console.log(profileData);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    console.log(name, value)
+    setFormData((formData) => ({ ...formData, [name]: value }));
   };
 
-  const handleConfirm = async () => {
+  useEffect(() => {
+    console.log("Updated formData:", formData);
+  }, [formData]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
+      console.log(formData);
       // Update patient data in the backend
-      const response = await EmployeeDataService.updatePatient(
+      const response = await EmployeeDataService.updateEmployee(
         employeeId,
         formData
       );
-      console.log("Profile updated successfully:", response.data);
-
+      if (response.status === 200) {
+        // 如果更新成功，导航到员工资料页面
+        setProfileData(formData);
+      } else {
+        throw new Error("Error updating employee data");
+      }
       // Optionally, you can update the local state with the new data
-      setProfileData(response.data);
+      setProfileData(formData);
     } catch (error) {
       console.error("Error updating employee data:", error);
     }
   };
 
+
+
   return (
-    <div>
-      <h2>Edit Profile</h2>
-      <form>
-        <label>
-          Name:
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        <label>
-          Date of Birth:
-          <input
-            type="text"
-            name="date_of_birth"
-            value={formData.date_of_birth}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        <label>
-          Biological Sex:
-          <input
-            type="text"
-            name="biological_sex"
-            value={formData.biological_sex}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        <label>
-          Phone:
-          <input
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        <label>
-          Street:
-          <input
-            type="text"
-            name="street"
-            value={formData.street}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        <label>
-          City:
-          <input
-            type="text"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        <label>
-          State:
-          <input
-            type="text"
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        <label>
-          Zipcode:
-          <input
-            type="text"
-            name="zipcode"
-            value={formData.zipcode}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        <label>
-          Specialty name:
-          <input
-            type="text"
-            name="specialty_name"
-            value={formData.specialty_name}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-        {/* Link to go back to the profile page */}
-        <Link to={`/patient/profile/${username}/${employeeId}`}>
-          {/* Confirm button */}
-          <button type="button" onClick={handleConfirm}>
-            Confirm
-          </button>
-          <button type="button">Cancel</button>
-        </Link>
-      </form>
-    </div>
+    <Container>
+      <Row>
+        <Col md={{ span: 6, offset: 3 }}>
+          <h2>Edit Profile</h2>
+          <Form>
+            {/* Name Field */}
+            <Form.Group controlId="formName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter name"
+              />
+            </Form.Group>
+
+            {/* Date of Birth Field */}
+            <Form.Group controlId="formDateOfBirth">
+              <Form.Label>Date of Birth</Form.Label>
+              <Form.Control
+                type="date"
+                name="date_of_birth"
+                value={formData.date_of_birth}
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            {/* Biological Sex Field */}
+            <Form.Group controlId="formBiologicalSex">
+              <Form.Label>Biological Sex</Form.Label>
+              <Form.Control
+                type="text"
+                name="biological_sex"
+                value={formData.biological_sex}
+                onChange={handleChange}
+                placeholder="Enter biological sex"
+              />
+            </Form.Group>
+
+            {/* Phone Field */}
+            <Form.Group controlId="formPhone">
+              <Form.Label>Phone</Form.Label>
+              <Form.Control
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Enter phone number"
+              />
+            </Form.Group>
+
+            {/* Address Fields */}
+            <Form.Group controlId="formStreet">
+              <Form.Label>Street</Form.Label>
+              <Form.Control
+                type="text"
+                name="street"
+                value={formData.street}
+                onChange={handleChange}
+                placeholder="Enter street address"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formCity">
+              <Form.Label>City</Form.Label>
+              <Form.Control
+                type="text"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                placeholder="Enter city"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formState">
+              <Form.Label>State</Form.Label>
+              <Form.Control
+                type="text"
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                placeholder="Enter state"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formZipcode">
+              <Form.Label>Zipcode</Form.Label>
+              <Form.Control
+                type="text"
+                name="zipcode"
+                value={formData.zipcode}
+                onChange={handleChange}
+                placeholder="Enter zipcode"
+              />
+            </Form.Group>
+
+            {/* Specialty Field */}
+            <Form.Group controlId="formSpecialty">
+              <Form.Label>Specialty</Form.Label>
+              <Form.Control
+                as="select"
+                name="spe_name"
+                value={formData.spe_name}
+                onChange={handleChange}
+              >
+                <option value="">Select Specialty</option>
+                {specialties.map((specialty, index) => (
+                  <option key={index} value={specialty.spe_name}>
+                    {specialty.spe_name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+
+            {/* Submit and Cancel Buttons */}
+            <Button variant="secondary" type="submit" onClick={handleSubmit}>Confirm</Button>
+            <Link to={`/employee/profile/${username}/${employeeId}`}>
+              <Button variant="secondary" type="button" className="ml-2">Cancel</Button>
+            </Link>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

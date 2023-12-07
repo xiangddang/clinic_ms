@@ -12,6 +12,8 @@ const Employee = () => {
 
   const [employeeId, setEmoloyeeId] = useState(null);
 
+  const [role, setRole] = useState('');
+
   // Dummy data (replace with actual data from API)
   useEffect(() => {
     fetchEmployeeData(username);
@@ -25,8 +27,13 @@ const Employee = () => {
         throw new Error('Failed to fetch employee data');
       }
 
-      console.log(response.data)
+
       setEmoloyeeId(response.data.emp_id);
+      if (response.data.is_doctor === 1) {
+        setRole('doctor');
+      } else {
+        setRole('nurse');
+      }
     } catch (error) {
       console.error('Error fetching patient data:', error);
     }
@@ -66,7 +73,7 @@ const Employee = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
-            <Nav.Link as={Link} to="/employee">
+            <Nav.Link as={Link} to={`/employee/${username}`}>
               Home
             </Nav.Link>
             <Nav.Link as={Link} to={`/employee/profile/${username}/${employeeId}`}>
@@ -98,11 +105,18 @@ const Employee = () => {
                           <td>{appointment.app_date}</td>
                           <td>{appointment.app_time}</td>
                           <td>
-                            <Link to={`/employee/check_medical_rec/${appointment.patient_id}/${employeeId}`}>
+                            { 
+                              role === 'doctor' ? (
+                                <Link to={`/employee/check_medical_rec/${appointment.patient_id}/${employeeId}`}>
                               {appointment.name}
                             </Link>
+                              ) : (
+                                <Link to={`/patient/check_prescript/${appointment.patient_id}`}>
+                                  {appointment.name}
+                                </Link>
+                              )
+                            }
                           </td>
-                          {/* Add more columns if needed */}
                         </tr>
                       ))}
                     </tbody>

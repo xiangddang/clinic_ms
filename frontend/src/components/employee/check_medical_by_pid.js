@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
 import PatientDataService from "../../services/patient.js";
 import EmployeeDataService from "../../services/employee.js";
@@ -20,6 +20,12 @@ const CheckMedicalRecord = () => {
     frequency: "",
     duration: "",
   });
+
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
@@ -130,7 +136,14 @@ const CheckMedicalRecord = () => {
       <p className="mt-3">No medical records found.</p>
     )}
 
-      <Button variant="primary" onClick={handleShowModal}>
+      <Button onClick={handleShowModal} className="btn btn-secondary"
+        style={{
+          padding: "10px 20px",
+          width: "auto",
+          marginLeft: "10px",
+          color: "black",
+          marginBottom: "10px",
+        }}>
         Add New Medical Record
       </Button>
 
@@ -220,6 +233,19 @@ const CheckMedicalRecord = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <Button
+        onClick={handleBack}
+        className="btn btn-secondary"
+        style={{
+          padding: "10px 20px",
+          width: "auto",
+          marginLeft: "10px",
+          color: "black",
+          marginBottom: "10px",
+        }}
+      >
+        Back
+      </Button>
     </div>
   );
 };
