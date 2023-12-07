@@ -19,6 +19,10 @@ const BillingList = () => {
     try {
       setError("");
 
+      if (!startDate || !endDate) {
+        throw new Error("Please select both start and end dates.");
+      }
+
       const data = {
         "start_date": startDate,
         "end_date": endDate
