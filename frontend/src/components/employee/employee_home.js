@@ -98,7 +98,7 @@ const Employee = () => {
                           <td>{appointment.app_date}</td>
                           <td>{appointment.app_time}</td>
                           <td>
-                            <Link to={`/employee/check_medical_rec/${appointment.patient_id}`}>
+                            <Link to={`/employee/check_medical_rec/${appointment.patient_id}/${employeeId}`}>
                               {appointment.name}
                             </Link>
                           </td>

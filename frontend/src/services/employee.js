@@ -48,6 +48,11 @@ class EmployeeDataService {
     getSpecialties() {
         return axios.get(`${process.env.REACT_APP_API_BASE_URL}/employee/spe`);
     }
+
+    // create a complete medical record for a patient
+    createCompleteMedicalRecord(patient_id, doctor_id, data) {
+        return axios.post(`${process.env.REACT_APP_API_BASE_URL}/employee/medrecc/${patient_id}/${doctor_id}`, data);
+    }
 }
 
 /* eslint import/no-anonymous-default-export: [2, {"allowNew": true}] */

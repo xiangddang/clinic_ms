@@ -789,7 +789,33 @@ begin
     p_dosage, p_frequency, p_duration);
 end $$
 
+delimiter ;
 
+-- create a complete medical record for a patient, including diagnosis and prescription, but only one disease and one medication
+delimiter $$
+create procedure create_medical_record_complete(
+    in p_patient_id int,
+    in p_doctor_id int,
+    in p_dis_name varchar(50),
+    in p_medication_name varchar(50),
+    in p_dosage varchar(100),
+    in p_frequency varchar(50),
+    in p_duration int
+)
+begin
+    declare v_medical_records_no int;
+    
+    start transaction;
+    -- insert into MedicalRecords table
+    call create_medical_record(p_patient_id, p_doctor_id);
+    -- get the medical record number
+    select medical_records_no into v_medical_records_no from MedicalRecords where patient_id = p_patient_id order by medical_records_no desc limit 1;
+    -- add diagnosis
+    call addDiagnosis(v_medical_records_no, p_dis_name);
+    -- add prescription
+    call addPrescription(v_medical_records_no, p_medication_name, p_dosage, p_frequency, p_duration);
+    commit;
+end $$
 delimiter ;
 
 -- get all sprcialty
