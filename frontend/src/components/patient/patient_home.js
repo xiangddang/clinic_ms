@@ -20,6 +20,7 @@ const Patient = () => {
   // 取得available预约时间
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
 
+
   const handleShowAppointmentModal = () => setShowAppointmentModal(true);
   const handleCloseAppointmentModal = () => setShowAppointmentModal(false);
 
@@ -52,9 +53,7 @@ const Patient = () => {
   const fetchLatestPrescription = async (patientId) => {
     try {
       // 发送请求到后端获取病患的最近一次处方信息
-      const response = await PatientDataService.getMedicalRecords(
-        patientId
-      );
+      const response = await PatientDataService.getMedicalRecords(patientId);
       const prescriptions = response.data;
 
       if (prescriptions.length > 0) {
@@ -90,13 +89,7 @@ const Patient = () => {
       const appointments = response.data;
 
       if (appointments.length > 0) {
-        const latestAppointment = {
-          appointment_no: appointments[0].appointment_no,
-          app_date: appointments[0].app_date,
-          app_time: appointments[0].app_time,
-          emp_id: appointments[0].emp_id,
-          doctor_name: appointments[0].doctor_name,
-        };
+        const latestAppointment = appointments[appointments.length - 1];
         setLatestAppointment(latestAppointment);
       } else {
         setLatestAppointment(null);
@@ -113,7 +106,7 @@ const Patient = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
-            <Nav.Link as={Link} to="/patient">
+            <Nav.Link as={Link} to={`/patient/${username}`}>
               Home
             </Nav.Link>
             <Nav.Link
@@ -126,7 +119,7 @@ const Patient = () => {
         </Navbar.Collapse>
       </Navbar>
 
-      {/* 第一个板块：预约界面 */}
+      {/* First Section: Book Appointment */}
       <Container>
         <Row className="mt-4">
           <Col>
@@ -149,10 +142,10 @@ const Patient = () => {
                 {latestPrescription ? (
                   <>
                     <p>Date: {latestPrescription.record_date}</p>
-                    <p>Disease: {latestAppointment.disease}</p>
-                    <p>Prescription: {latestAppointment.prescription}</p>
+                    <p>Disease: {latestPrescription.disease}</p>
                     <p>Medication: {latestPrescription.medication}</p>
-                    <Link to={`/check_prescript/${username}/${patientId}`}>
+                    <p>Prescription: {latestPrescription.prescription}</p>
+                    <Link to={`/patient/check_prescript/${patientId}`}>
                       Check Details
                     </Link>
                   </>
@@ -173,10 +166,11 @@ const Patient = () => {
                 {/* 显示最近的一次预约信息 */}
                 {latestAppointment ? (
                   <>
-                    <p>Date: {latestAppointment.date}</p>
-                    <p>Doctor: {latestAppointment.doctorName}</p>
+                    <p>Date: {latestAppointment.app_date}</p>
+                    <p>Time: {latestAppointment.app_time}</p>
+                    <p>Doctor: {latestAppointment.doctor_name}</p>
                     {/* Add other appointment details */}
-                    <Link to={`/appointment_list/${username}/${patientId}`}>
+                    <Link to={`/patient/check_apps/${patientId}`}>
                       Check Details
                     </Link>
                   </>

@@ -499,33 +499,51 @@ DELIMITER ;
 
 DELIMITER //
 
-CREATE PROCEDURE cancel_appointment(in p_app_no INT, in p_patt_id int)
+CREATE PROCEDURE cancel_appointment(in p_app_no INT, in p_patt_id INT)
 BEGIN
-    Declare this_patient_id int;
-    declare combined_datetime datetime;
+    DECLARE this_patient_id INT DEFAULT NULL;
+    DECLARE combined_datetime DATETIME DEFAULT NULL;
 
-    -- check if this appointment exist
-    Select patient_id into this_patient_id 
-    from appointments 
-    where appointment_no = p_app_no
-        and patient_id = p_patt_id;
+    -- Check if this appointment exists for this patient
+    SELECT patient_id INTO this_patient_id 
+    FROM appointments 
+    WHERE appointment_no = p_app_no
+    AND patient_id = p_patt_id;
 
-    -- get the exact time of the appointment
-    SELECT CONCAT(app_date, ' ', app_time) into combined_datetime
+    -- If no matching appointment was found, signal an error
+    IF this_patient_id IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Appointment not found or does not belong to the patient', MYSQL_ERRNO = 3004;
+        LEAVE proc;
+    END IF;
+
+    -- Get the exact time of the appointment
+    SELECT TIMESTAMP(app_date, app_time) INTO combined_datetime
     FROM appointments
     WHERE appointment_no = p_app_no;
 
-    If this_patient_id is not NULL and combined_datetime >= NOW() THEN
-        UPDATE appointments
-        SET patient_id = NULL
-        WHERE appointment_no = p_app_no;
-    ELSE
+    -- Check if combined_datetime is NULL
+    IF combined_datetime IS NULL THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'No matching future appointment found or not authorized to cancel', MYSQL_ERRNO = 3003;
+        SET MESSAGE_TEXT = 'Invalid appointment date or time', MYSQL_ERRNO = 3006;
+        LEAVE proc;
     END IF;
+
+    -- Check if appointment is in the future
+    IF combined_datetime < NOW() THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot cancel past appointments', MYSQL_ERRNO = 3005;
+        LEAVE proc;
+    END IF;
+
+    -- Proceed to cancel the appointment
+    UPDATE appointments
+    SET patient_id = NULL
+    WHERE appointment_no = p_app_no;
 END //
 
 DELIMITER ;
+
 
 
 -- create appointment for an active doctor for a specific day

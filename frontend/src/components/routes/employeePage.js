@@ -13,7 +13,7 @@ function EmployeePage() {
         <Route path="/profile/:username/:employeeId" element={<EmployeeProfile />} />
         <Route path="/profile/:username/:employeeId/edit" element={<EditProfile />} />
         <Route path='/check_schedule/:employeeId' element={<CheckSchedule />} />
-        <Route path='/check_medical_rec/:patientId:doctorId' element={<CheckMedicalRecord />} />
+        <Route path='/check_medical_rec/:patientId/:doctorId' element={<CheckMedicalRecord />} />
       </Routes>
     </div>
   );

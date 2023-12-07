@@ -47,7 +47,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('edit_user_account', (username, password, email))
-                self.connection.commit()
+                connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -71,7 +71,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('update_patient_information', (patient_id, name, date_of_birth, phone, street, city, state, zipcode, emergency_name, emergency_phone, biological_sex,))
-                self.connection.commit()
+                connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -83,7 +83,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('get_employee_info', (username,))
-                employee = cursor.fetchone()
+                    employee = cursor.fetchone()
             return employee
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -95,7 +95,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('update_employee_info', (employee_id, name, date_of_birth, phone, street, city, state, zipcode, biological_sex, spe_name,))
-                self.connection.commit()
+                connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -130,7 +130,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('book_appointment', (app_id, patient_id,))
-                self.connection.commit()
+                connection.commit()  # Commit using the local connection object
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -155,7 +155,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('cancel_appointment', (app_id, patient_id))
-                self.connection.commit()
+                connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -204,7 +204,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('create_medical_record', (patient_id, doctor_id,))
-                self.connection.commit()
+                connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -216,7 +216,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('addDiagnosis', (record_no, diagnosis,))
-                self.connection.commit()
+                connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -228,7 +228,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('addPrescription', (record_no, medication_name, dosage, frequency, duration,))
-                self.connection.commit()
+                connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -238,8 +238,8 @@ class DatabaseManager:
         try:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
-                    cursor.callproc('addMedicalRecordComplete', (patient_id, doctor_id, diagnosis, medication_name, dosage, frequency, duration,))
-                self.connection.commit()
+                    cursor.callproc('create_medical_record_complete', (patient_id, doctor_id, diagnosis, medication_name, dosage, frequency, duration,))
+                connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -299,7 +299,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('CreateEmployeeUser', (name, date_of_birth, phone, street, city, state, zipcode, start_date, role, spe_name, email,))
-                self.connection.commit()
+                connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -311,7 +311,7 @@ class DatabaseManager:
             with self.get_connection() as connection:
                 with connection.cursor() as cursor:
                     cursor.callproc('delete_employee', (employee_id,))
-                self.connection.commit()
+                connection.commit()
             return True
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
@@ -346,7 +346,3 @@ class DatabaseManager:
         except pymysql.Error as e:
             print(f"Database error: {str(e)}")
             return None
-    
-    def close_connection(self):
-        # close connection
-        self.connection.close()

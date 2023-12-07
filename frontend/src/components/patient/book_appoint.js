@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Alert } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PatientDataService from "../../services/patient";
 
@@ -9,6 +9,8 @@ const BookAppointment = ({ show, handleClose, patientId }) => {
   const [availableSlots, setAvailableSlots] = useState(null);
   // 状态：用户选择的日期和时间
   const [selectedSlot, setSelectedSlot] = useState(null);
+
+  const [bookingMessage, setBookingMessage] = useState({ text: "", type: "" });
 
   // 在组件挂载时，获取可用日期数据
   useEffect(() => {
@@ -37,17 +39,21 @@ const BookAppointment = ({ show, handleClose, patientId }) => {
     if (selectedSlot && patientId) {
       try {
         const appointmentId = selectedSlot.appointment_no;
-        // 向后端发送预约请求
+        // Send booking request to backend
         const response = await PatientDataService.bookAppointment(patientId, appointmentId);
         console.log("Appointment booked successfully:", response.data);
-
-        // 在这里可以添加其他逻辑，例如关闭模态框、刷新数据等
-        handleClose();
+        // Set success message and close modal after a delay
+        setBookingMessage({ text: "Appointment booked successfully!", type: "success" });
+        setTimeout(() => {
+          handleClose();
+          setBookingMessage({ text: "", type: "" }); // Reset message
+        }, 3000);
       } catch (error) {
         console.error("Error booking appointment:", error);
+        setBookingMessage({ text: "Error booking appointment. Please try again.", type: "danger" });
       }
     } else {
-      console.error("No slot selected.");
+      setBookingMessage({ text: "No slot selected. Please select a slot to book.", type: "warning" });
     }
   };
 
@@ -57,6 +63,9 @@ const BookAppointment = ({ show, handleClose, patientId }) => {
         <Modal.Title>Book an Appointment</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+      {bookingMessage.text && (
+          <Alert variant={bookingMessage.type}>{bookingMessage.text}</Alert>
+        )}
         {availableSlots ? (
           <Form>
             <Form.Group controlId="slotSelect">

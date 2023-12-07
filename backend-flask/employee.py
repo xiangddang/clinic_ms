@@ -7,6 +7,7 @@ employee_bp = Blueprint('employee_bp', __name__)
 # get info of employee with username
 @employee_bp.route('/<username>', methods=['GET'])
 def get_employee(username):
+    print(username)
     employee = db_manager.fetchEmployee(username)
     if employee:
         return jsonify(employee), 200
@@ -101,7 +102,7 @@ def create_medical_record_complete(patient_id, doctor_id):
     frequency = data.get('frequency')
     duration = data.get('duration')
     
-    create = db_manager.createMedicalRecordComplete(patient_id, doctor_id, disease, medication, dosage, frequency, duration)
+    create = db_manager.addMedicalRecordComplete(patient_id, doctor_id, disease, medication, dosage, frequency, duration)
     if create:
         return jsonify({'message': f'medical record created'}), 200
     else:
