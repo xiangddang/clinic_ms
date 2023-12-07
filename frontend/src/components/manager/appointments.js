@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Container, Table } from "react-bootstrap";
+import { Container, Table, Button } from "react-bootstrap";
 import ManageDataService from "../../services/manage.js";
+import { useNavigate } from "react-router-dom";
 
 const AppointmentList = () => {
   const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate("/manager");
+  };
 
   useEffect(() => {
     fetchAppointments();
@@ -14,7 +21,7 @@ const AppointmentList = () => {
     try {
       setError(""); // Reset any existing errors
       const response = await ManageDataService.getAppointments();
-        console.log(response.data)
+      console.log(response.data);
       if (response.status !== 200) {
         throw new Error("Error fetching appointments");
       }
@@ -48,6 +55,19 @@ const AppointmentList = () => {
           ))}
         </tbody>
       </Table>
+      <Button
+            onClick={handleBack}
+            className="btn btn-secondary" 
+            style={{
+              padding: "10px 20px",
+              width: "auto",
+              marginLeft: "10px",
+              color: "black",
+              marginBottom: "10px",
+            }}
+          >
+            Back
+      </Button>
     </Container>
   );
 };

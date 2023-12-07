@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Container, Table } from "react-bootstrap";
+import { Container, Table, Button } from "react-bootstrap";
 import ManageDataService from "../../services/manage.js";
+import { useNavigate } from "react-router-dom";
 
 const PatientList = () => {
   const [patients, setPatients] = useState([]);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchPatients();
   }, []);
+
+  const handleBack = () => {
+    navigate("/manager");
+  };
 
   const fetchPatients = async () => {
     try {
@@ -28,6 +35,7 @@ const PatientList = () => {
   return (
     <Container>
       <h2>Patients List</h2>
+     
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -60,8 +68,22 @@ const PatientList = () => {
           ))}
         </tbody>
       </Table>
+      <Button
+            onClick={handleBack}
+            className="btn btn-secondary" 
+            style={{
+              padding: "10px 20px",
+              width: "auto",
+              marginLeft: "10px",
+              color: "black",
+              marginBottom: "10px",
+            }}
+          >
+            Back
+      </Button>
       {error && <div>Error: {error}</div>}
     </Container>
+    
   );
 };
 

@@ -9,6 +9,7 @@ import {
   Form,
   Alert,
 } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import ManageDataService from "../../services/manage.js";
 import EmployeeDataService from "../../services/employee.js";
 
@@ -34,6 +35,12 @@ const EmployeeDetails = () => {
   });
   const [specialties, setSpecialties] = useState([]);
 
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate("/manager");
+  };
+
   useEffect(() => {
     fetchAllEmployees();
     fetchAllSpecialties();
@@ -43,7 +50,7 @@ const EmployeeDetails = () => {
     try {
       setError("");
       const response = await ManageDataService.getEmployees();
-      console.log(response.data)
+      console.log(response.data);
       // Assuming the response is successful, set the employees data
       setEmployees(response.data);
     } catch (error) {
@@ -64,7 +71,6 @@ const EmployeeDetails = () => {
       setError(error.message || "Error fetching specialties");
     }
   };
-  
 
   const handleAddEmployee = async () => {
     try {
@@ -100,11 +106,12 @@ const EmployeeDetails = () => {
     console.log(emp_id);
     setSelectedEmployee(emp_id);
     setShowDeleteModal(true);
-  }
+  };
 
   const handleDeleteEmployee = async () => {
     try {
-      if (!selectedEmployee) throw new Error("No employee selected for deletion");
+      if (!selectedEmployee)
+        throw new Error("No employee selected for deletion");
       const response = await ManageDataService.deleteEmployee(selectedEmployee);
       if (response.status !== 200) throw new Error("Error deleting employee");
 
@@ -117,13 +124,36 @@ const EmployeeDetails = () => {
 
   return (
     <Container>
-      <Row className="mt-4">
-        <Col>
-          <Button onClick={() => setShowAddModal(true)}>
+      <h2>Employee List</h2>
+      <Row className="mt-4 justify-content-center">
+        <Col xs="auto">
+          {" "}
+          {/* Ensuring buttons are wrapped and their width is auto-adjusted */}
+          <Button
+            onClick={() => setShowAddModal(true)}
+            className="btn btn-secondary"
+            style={{ padding: "10px 20px", width: "auto", color: "black" }}
+          >
             Add New Employee
           </Button>
         </Col>
+
+        <Col xs="auto">
+          <Button
+            onClick={handleBack}
+            className="btn btn-secondary"
+            style={{
+              padding: "10px 20px",
+              width: "auto",
+              marginLeft: "10px",
+              color: "black",
+            }}
+          >
+            Back
+          </Button>
+        </Col>
       </Row>
+
       {error && <Alert variant="danger">{error}</Alert>}
       <Row className="mt-4">
         {employees.map((employee) => (
@@ -142,9 +172,7 @@ const EmployeeDetails = () => {
                 <p>Specialty: {employee.spe_name}</p>
                 <Button
                   variant="danger"
-                  onClick={() => 
-                    handleDeleteConfirmation(employee.emp_id)
-                  }
+                  onClick={() => handleDeleteConfirmation(employee.emp_id)}
                 >
                   Delete Employee
                 </Button>

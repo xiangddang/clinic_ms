@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import { Container, Table, Form, Button } from "react-bootstrap";
 import ManageDataService from "../../services/manage.js";
+import { useNavigate } from "react-router-dom";
 
 const BillingList = () => {
   const [billings, setBillings] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+  
+  const handleBack = () => {
+    navigate("/manager");
+  };
 
   const fetchBillingData = async () => {
     try {
@@ -54,7 +61,7 @@ const BillingList = () => {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </Form.Group>
-        <Button type="submit" style={{ marginTop: '20px'}}>Search</Button>
+        <Button type="submit" className="btn btn-secondary" style={{ marginTop: '20px', color: "black"}}>Search</Button>
       </Form>
       <Table striped bordered hover className="mt-3">
         <thead>
@@ -79,6 +86,19 @@ const BillingList = () => {
         </tbody>
       </Table>
       {error && <div>Error: {error}</div>}
+      <Button
+            onClick={handleBack}
+            className="btn btn-secondary" 
+            style={{
+              padding: "10px 20px",
+              width: "auto",
+              marginLeft: "10px",
+              color: "black",
+              marginBottom: "10px",
+            }}
+          >
+            Back
+      </Button>
     </Container>
   );
 };
