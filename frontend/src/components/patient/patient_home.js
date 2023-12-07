@@ -13,7 +13,7 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../shared/navbar.css";
 import BookAppointment from "./book_appoint";
-import PatientDataService from '../../services/patient';
+import PatientDataService from "../../services/patient";
 
 const Patient = () => {
   const { username } = useParams();
@@ -33,17 +33,16 @@ const Patient = () => {
   const fetchPatientData = async (username) => {
     try {
       const response = await PatientDataService.getPatient(username);
-      console.log(response.data)
+      console.log(response.data);
       setProfileData(response.data);
     } catch (error) {
-      console.error('Error fetching patient data:', error);
+      console.error("Error fetching patient data:", error);
     }
-  }
+  };
   const patientId = profileData ? profileData.patient_id : null;
   console.log(patientId);
-  
+
   const [latestPrescription, setLatestPrescription] = useState(null);
-  const [latestAppointment, setLatestAppointment] = useState(null);
 
   useEffect(() => {
     // 在组件挂载时获取病患的最近一次处方信息
@@ -53,27 +52,57 @@ const Patient = () => {
   const fetchLatestPrescription = async (patientId) => {
     try {
       // 发送请求到后端获取病患的最近一次处方信息
-      const response = await PatientDataService.getAppointmentPatient(patientId);
-      // 设置最近一次处方信息的状态
-      setLatestPrescription(response.latestPrescription);
+      const response = await PatientDataService.getMedicalRecords(
+        patientId
+      );
+      const prescriptions = response.data;
+
+      if (prescriptions.length > 0) {
+        const latestPrescription = {
+          md_id: prescriptions[0].medical_records_no,
+          record_date: prescriptions[0].record_date,
+          disease: prescriptions[0].disease,
+          medication: prescriptions[0].medication,
+          prescription: prescriptions[0].prescriptions,
+        };
+        setLatestPrescription(latestPrescription);
+      } else {
+        setLatestPrescription(null);
+      }
     } catch (error) {
       console.error("Error fetching latest prescription:", error);
     }
   };
 
+  const [latestAppointment, setLatestAppointment] = useState(null);
+
   useEffect(() => {
     // Fetch the latest appointment when the component mounts
     fetchLatestAppointment(patientId);
   }, [patientId]);
-  
+
   const fetchLatestAppointment = async (patientId) => {
     try {
       // Fetch the latest appointment for the specific patient
-      const response = await fetch(`/api/appointments/${patientId}/latest`);
-      const data = await response.json();
-      setLatestAppointment(data.latestAppointment);
+      const response = await PatientDataService.getAppointmentPatient(
+        patientId
+      );
+      const appointments = response.data;
+
+      if (appointments.length > 0) {
+        const latestAppointment = {
+          appointment_no: appointments[0].appointment_no,
+          app_date: appointments[0].app_date,
+          app_time: appointments[0].app_time,
+          emp_id: appointments[0].emp_id,
+          doctor_name: appointments[0].doctor_name,
+        };
+        setLatestAppointment(latestAppointment);
+      } else {
+        setLatestAppointment(null);
+      }
     } catch (error) {
-      console.error('Error fetching latest appointment:', error);
+      console.error("Error fetching latest appointment:", error);
     }
   };
 
@@ -87,7 +116,10 @@ const Patient = () => {
             <Nav.Link as={Link} to="/patient">
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to={`/patient/profile/${username}/${patientId}`}>
+            <Nav.Link
+              as={Link}
+              to={`/patient/profile/${username}/${patientId}`}
+            >
               Profile
             </Nav.Link>
           </Nav>
@@ -116,16 +148,17 @@ const Patient = () => {
                 {/* 根据最近一次处方信息显示数据 */}
                 {latestPrescription ? (
                   <>
-                    <p>Date: {latestPrescription.date}</p>
+                    <p>Date: {latestPrescription.record_date}</p>
+                    <p>Disease: {latestAppointment.disease}</p>
+                    <p>Prescription: {latestAppointment.prescription}</p>
                     <p>Medication: {latestPrescription.medication}</p>
-                    <p>Dosage: {latestPrescription.dosage}</p>
-                    {/* 其他处方信息 */}
-                    <Link to={`/check_prescript/${patientId}`}>Check Details</Link>
+                    <Link to={`/check_prescript/${username}/${patientId}`}>
+                      Check Details
+                    </Link>
                   </>
                 ) : (
                   <p>No prescription available.</p>
                 )}
-                
               </Card.Body>
             </Card>
           </Col>
@@ -143,7 +176,7 @@ const Patient = () => {
                     <p>Date: {latestAppointment.date}</p>
                     <p>Doctor: {latestAppointment.doctorName}</p>
                     {/* Add other appointment details */}
-                    <Link to={`/appointment_list/${patientId}`}>
+                    <Link to={`/appointment_list/${username}/${patientId}`}>
                       Check Details
                     </Link>
                   </>
