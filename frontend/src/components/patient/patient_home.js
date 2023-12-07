@@ -115,6 +115,9 @@ const Patient = () => {
             >
               Profile
             </Nav.Link>
+            <Nav.Link as={Link} to="/">
+              Log Out
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

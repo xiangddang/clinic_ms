@@ -79,6 +79,9 @@ const Employee = () => {
             <Nav.Link as={Link} to={`/employee/profile/${username}/${employeeId}`}>
               Profile
             </Nav.Link>
+            <Nav.Link as={Link} to="/">
+              Log Out
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
