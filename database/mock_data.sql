@@ -97,8 +97,8 @@ INSERT INTO disease (dis_name, dis_descirption) VALUES ('Skin Infection',
 INSERT INTO MedicalRecords (record_date, patient_id, doctor_id) VALUES ('2023-11-15', 1, 1);
 
 -- insert data into diagnosis
-INSERT INTO diagnosis (medical_records_no, dis_id) values (1, 1);
-INSERT INTO diagnosis (medical_records_no, dis_id) values (1, 4);
+INSERT INTO diagnosis (medical_records_no, dis_id, patient_id) values (1, 1, 1);
+INSERT INTO diagnosis (medical_records_no, dis_id, patient_id) values (1, 4, 1);
 
 -- insert data into medication
 INSERT INTO medication (medication_name, medication_description) VALUES ('Acetaminophen', 
@@ -126,4 +126,4 @@ INSERT INTO medication (medication_name, medication_description) VALUES ('Cetiri
 'An antihistamine used to relieve allergy symptoms such as watery eyes, runny nose, itching eyes/nose, and sneezing.');
 
 -- insert data into prescription
-INSERT INTO prescription (medical_records_no, medication_id, dosage, frequency, duration) values (1, 1, '1 tablet', 'three times per day', 3);
+INSERT INTO prescription (patient_id, medical_records_no, medication_id, dosage, frequency, duration) values (1, 1, 1, '1 tablet', 'three times per day', 3);
