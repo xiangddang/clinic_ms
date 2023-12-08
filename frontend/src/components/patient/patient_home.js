@@ -154,7 +154,7 @@ const Patient = () => {
           <Col>
             <Card>
               <Card.Body>
-                <Card.Title>Prescription Information</Card.Title>
+                <Card.Title>Medical Record Information</Card.Title>
                 {/* 根据最近一次处方信息显示数据 */}
                 {latestPrescription ? (
                   <>
@@ -167,7 +167,7 @@ const Patient = () => {
                     </Link>
                   </>
                 ) : (
-                  <p>No prescription available.</p>
+                  <p>No medical record available.</p>
                 )}
               </Card.Body>
             </Card>
