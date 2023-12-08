@@ -65,3 +65,10 @@ REACT_APP_API_BASE_URL=http://127.0.0.1:5000
 - Ensure the database settings in the backend `.env` file are accurate.
 - Both frontend and backend servers must be operational for full functionality.
 - Set the `REACT_APP_API_URL` in the frontend `.env` file to match your backend server's address.
+
+## File Structure
+- **backend**: Contains the Flask server code.
+- **database**: Contains the SQL dump file and MySQL schema for the database.
+- **frontend**: Contains the React frontend code.
+- **reports**: Contains the project report and some graphs.
+
