@@ -47,10 +47,10 @@ const Patient = () => {
   useEffect(() => {
     // Fetch the latest prescription when the component mounts
     fetchLatestPrescription(patientId);
-          // Set up an interval to fetch the latest appointment every 10 minutes
+
     const intervalId = setInterval(() => {
       fetchLatestPrescription(patientId);
-    }, 10000); // 600000 milliseconds = 10 minutes
+    }, 10000); 
         
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
