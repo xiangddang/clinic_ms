@@ -153,6 +153,7 @@ const Patient = () => {
             <Card>
               <Card.Body>
                 <Card.Title>Prescription Information</Card.Title>
+                <Card.Title>Medical Record Information</Card.Title>
                 {latestPrescription ? (
                   <>
                     <p>Date: {latestPrescription.record_date}</p>
@@ -164,7 +165,7 @@ const Patient = () => {
                     </Link>
                   </>
                 ) : (
-                  <p>No prescription available.</p>
+                  <p>No medical record available.</p>
                 )}
               </Card.Body>
             </Card>
