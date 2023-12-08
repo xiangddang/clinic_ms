@@ -17,7 +17,6 @@ import PatientDataService from "../../services/patient";
 
 const Patient = () => {
   const { username } = useParams();
-  // 取得available预约时间
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
 
 
@@ -46,7 +45,7 @@ const Patient = () => {
   const [latestPrescription, setLatestPrescription] = useState(null);
 
   useEffect(() => {
-    // 在组件挂载时获取病患的最近一次处方信息
+    // Fetch the latest prescription when the component mounts
     fetchLatestPrescription(patientId);
           // Set up an interval to fetch the latest appointment every 10 minutes
     const intervalId = setInterval(() => {
@@ -59,7 +58,7 @@ const Patient = () => {
 
   const fetchLatestPrescription = async (patientId) => {
     try {
-      // 发送请求到后端获取病患的最近一次处方信息
+
       const response = await PatientDataService.getMedicalRecords(patientId);
       const prescriptions = response.data;
 
@@ -149,13 +148,11 @@ const Patient = () => {
           </Col>
         </Row>
 
-        {/* 第二个板块：处方信息 */}
         <Row className="mt-4">
           <Col>
             <Card>
               <Card.Body>
                 <Card.Title>Prescription Information</Card.Title>
-                {/* 根据最近一次处方信息显示数据 */}
                 {latestPrescription ? (
                   <>
                     <p>Date: {latestPrescription.record_date}</p>
@@ -174,13 +171,11 @@ const Patient = () => {
           </Col>
         </Row>
 
-        {/* 第三个板块：预约信息 */}
         <Row className="mt-4">
           <Col>
             <Card>
               <Card.Body>
                 <Card.Title>Appointment Information</Card.Title>
-                {/* 显示最近的一次预约信息 */}
                 {latestAppointment ? (
                   <>
                     <p>Date: {latestAppointment.app_date}</p>
@@ -199,7 +194,6 @@ const Patient = () => {
           </Col>
         </Row>
 
-        {/* 预约界面 */}
         <BookAppointment
           show={showAppointmentModal}
           handleClose={handleCloseAppointmentModal}

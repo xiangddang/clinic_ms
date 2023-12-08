@@ -1,73 +1,67 @@
 # Clinic Management System
 
 ## Project Overview
-This Clinic Management System is designed to provide a user-friendly interface for managing daily operations of a clinic. The system allows users to manage patient data, appointments, employee information, and more.
+The Clinic Management System is an advanced solution tailored to streamline the operations of medical clinics. Designed with user-friendliness at its core, this system simplifies the management of patient records, appointment scheduling, and employee information management, among other functionalities.
 
 ## Technology Stack
-- **Frontend**: React
-- **Backend**: Python Flask
-- **Database**: MySQL
+- **Frontend**: Developed using React, offering a responsive and intuitive user interface.
+- **Backend**: Python Flask, ensuring a robust and scalable server-side framework.
+- **Database**: Utilizes MySQL for efficient and secure data management.
 
 ## Environment Setup
-Ensure your computer has the following software installed:
-- [Python](https://www.python.org/downloads/) (version 3.8 or higher)
-- [Node.js and npm](https://nodejs.org/en/download/)
-- [MySQL](https://dev.mysql.com/downloads/mysql/)
+To prepare for installation, the following software is required:
+- [Python](https://www.python.org/downloads/) (Version 3.8 or above recommended)
+- [Node.js and npm](https://nodejs.org/en/download/) for managing frontend dependencies.
+- [MySQL](https://dev.mysql.com/downloads/mysql/) as the database platform.
 
 ## Installation Steps
 
 ### Backend Setup
-1. Clone the repository: `git clone https://github.com/xiangddang/clinic_ms`
-2. Navigate to the project directory: `cd backend`
-3. Install dependencies: `pip3 install flask`, `pip3 install flask-cors`, `pip3 install mysql-connector-python`
+1. Clone the repository with `git clone https://github.com/xiangddang/clinic_ms`.
+2. Enter the project directory (`cd backend`) and install the necessary Python packages:
+   - Flask: `pip3 install flask`
+   - Flask-CORS: `pip3 install flask-cors`
+   - MySQL Connector for Python (pymysql): `pip3 install pymysql`
 
 ### Frontend Setup
-1. Navigate to the frontend directory: `cd frontend`
-2. Install dependencies: `yarn install`
+1. Switch to the frontend directory (`cd frontend`).
+2. Install all required Node modules: `yarn install`
 
 ## Database Configuration
-1. Use the dump file in the database directory to create the database in your MySQL server.
+1. Populate your MySQL server with initial data using the provided SQL dump file located in the database directory.
 
 ## Environment Configuration
-### Backend Environment setup
-1. In the bakcend directory, create a file named `.env` file.
-2. add the following lines:
+### Backend
+1. Inside the backend directory, create a `.env` file for environment variables.
+2. Populate the file with your MySQL credentials:
+
 ```
 DATABASE_NAME=[your database name]
 DATABASE_USER=[your database username]
 DATABASE_PASSWORD=[your database password]
 ```
-3. If you have source code including `env`, you can update the `.env` file with your own database credentials.
+3. Update this `.env` file as needed, especially when using existing source code.
 
-### Frontend Environment setup
-1. In the frontend directory, create a file named `.env` file.
-2. add the following lines:
+### Frontend
+1. Create a `.env` file in the frontend directory.
+2. Define the backend server URL:
 ```
 REACT_APP_BASE_URL=http://localhost:3000
 REACT_APP_API_BASE_URL=http://127.0.0.1:5000
 ```
 
 ## Running the Project
-- To start the backend server: Run `python app.py` in the project `backend` directory.
-- To start the frontend: Run `yarn start` in the `frontend` directory.
-
+- Backend: Launch the server with `python app.py` within the backend directory.
+- Frontend: Start the interface using `yarn start` in the frontend directory.
 
 ## Additional Notes
-- Access the frontend application at `http://localhost:3000`.
-- For experiencing the application, new patient accounts can be created in the `register` page. This allows users to fully explore the application with their unique details.
-- For quick testing and evaluation, the following default user accounts are available:
-  - **Patient Account:**
-    - Username: `johndoe`
-    - Password: `password123`
-  - **Doctor Account:**
-    - Username: `drsmith`
-    - Password: `password123`
-  - **Nurse Account:**
-    - Username: `nursejones`
-    - Password: `password123`
-  - **Admin Account:**
-    - Username: `adminuser`
-    - Password: `adminpass`
-- Ensure that your database configuration matches the settings in your backend `.env` file.
-- The frontend and backend servers need to be running for full functionality.
-- The frontend's `.env` file should have the `REACT_APP_API_URL` set to your backend server's address for proper communication between the two.
+- The frontend can be accessed at `http://localhost:3000`.
+- Users can create new patient accounts through the registration page for a personalized experience.
+- Predefined accounts are available for rapid testing:
+    **Patient:** Username `johndoe`, Password `password123`
+    **Doctor:** Username `drsmith`, Password `password123`
+    **Nurse:** Username `nursejones`, Password `password123`
+    **Admin:** Username `adminuser`, Password `adminpass`
+- Ensure the database settings in the backend `.env` file are accurate.
+- Both frontend and backend servers must be operational for full functionality.
+- Set the `REACT_APP_API_URL` in the frontend `.env` file to match your backend server's address.

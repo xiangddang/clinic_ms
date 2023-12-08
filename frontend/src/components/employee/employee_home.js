@@ -14,7 +14,6 @@ const Employee = () => {
 
   const [role, setRole] = useState('');
 
-  // Dummy data (replace with actual data from API)
   useEffect(() => {
     fetchEmployeeData(username);
   }, [username]);
@@ -43,6 +42,7 @@ const Employee = () => {
 
   useEffect(() => {
     // Fetch appointments for today when the component mounts
+    // since now data is few, return all appointments first
     fetchAppointmentsForToday();
   }, [employeeId]);
 

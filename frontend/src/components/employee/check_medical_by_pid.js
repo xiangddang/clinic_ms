@@ -30,6 +30,7 @@ const CheckMedicalRecord = () => {
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
 
+  // fecth all diseases and medications
   const fetchAllDiseases = async () => {
     try {
       setError("");
@@ -212,7 +213,7 @@ const CheckMedicalRecord = () => {
               />
             </Form.Group>
             <Form.Group>
-              <Form.Label>Duration</Form.Label>
+              <Form.Label>Duration(days)</Form.Label>
               <Form.Control
                 type="int"
                 unit="days"

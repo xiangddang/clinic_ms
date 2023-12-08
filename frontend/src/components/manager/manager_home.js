@@ -47,7 +47,7 @@ const Manager = () => {
           </Col>
         </Row>
 
-         {/* Third Section: Appointment Information */}
+         {/* Third Section: Patient Information */}
          <Row className="mt-4">
           <Col>
             <Card>
@@ -60,7 +60,7 @@ const Manager = () => {
         </Row>
       
 
-      {/* Fouth Section: Appointment Information */}
+      {/* Fouth Section: BillingInformation */}
       <Row className="mt-4">
           <Col>
             <Card>

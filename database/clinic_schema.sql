@@ -780,10 +780,11 @@ delimiter ;
 delimiter $$
 create procedure addDiagnosis(
     in p_medical_records_no int,
-    in p_dis_name varchar(50)
+    in p_dis_name varchar(50),
+    in p_patient_id int
 )
 begin
-    insert into Diagnosis values (p_medical_records_no, (select dis_id from disease where dis_name = p_dis_name));
+    insert into Diagnosis values (p_medical_records_no, p_patient_id, (select dis_id from disease where dis_name = p_dis_name));
 end $$
 delimiter ;
 
@@ -794,10 +795,11 @@ create procedure addPrescription(
     in p_medication_name varchar(50),
     in p_dosage varchar(100),
     in p_frequency varchar(50),
-    in p_duration int
+    in p_duration int,
+    in p_patient_id int
 )
 begin
-    insert into Prescription values (p_medical_records_no, 
+    insert into Prescription values (p_medical_records_no, p_patient_id,
     (select medication_id from medication where medication_name = p_medication_name), 
     p_dosage, p_frequency, p_duration);
 end $$
@@ -824,9 +826,9 @@ begin
     -- get the medical record number
     select medical_records_no into v_medical_records_no from MedicalRecords where patient_id = p_patient_id order by medical_records_no desc limit 1;
     -- add diagnosis
-    call addDiagnosis(v_medical_records_no, p_dis_name);
+    call addDiagnosis(v_medical_records_no, p_dis_name, p_patient_id);
     -- add prescription
-    call addPrescription(v_medical_records_no, p_medication_name, p_dosage, p_frequency, p_duration);
+    call addPrescription(v_medical_records_no, p_medication_name, p_dosage, p_frequency, p_duration, p_patient_id);
     commit;
 end $$
 delimiter ;

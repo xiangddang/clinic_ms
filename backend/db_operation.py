@@ -11,6 +11,7 @@ class DatabaseManager:
     def __init__(self):
         pass
 
+    # get connection to database
     def get_connection(self):
         return pymysql.connect(
             host='localhost',
@@ -20,6 +21,7 @@ class DatabaseManager:
             cursorclass=pymysql.cursors.DictCursor
         )
     
+    # fetch all available appointments for patients to book
     def fetchUser(self, username):
         try:
             with self.get_connection() as connection:
@@ -31,6 +33,7 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return None
     
+    # create a new patient user
     def createPatientUser(self, username, password, email):
         try:
             with self.get_connection() as connection:
@@ -42,6 +45,7 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return False
     
+    # update a user information
     def updateUser(self, username, password, email):
         try:
             with self.get_connection() as connection:
@@ -113,6 +117,7 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return None
     
+    # fetch all appointments of employee by employee id, rescending order by date and time
     def fetchAppointmentsEmployee(self, emp_id):
         try:
             with self.get_connection() as connection:
@@ -234,6 +239,7 @@ class DatabaseManager:
             print(f"Database error: {str(e)}")
             return False
     
+    # add a complete medical record with diagnosis and prescription
     def addMedicalRecordComplete(self, patient_id, doctor_id, diagnosis, medication_name, dosage, frequency, duration):
         try:
             with self.get_connection() as connection:

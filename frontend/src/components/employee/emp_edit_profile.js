@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { useParams, Link } from "react-router-dom";
+import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import EmployeeDataService from "../../services/employee";
 
 const EditProfile = () => {
@@ -17,9 +17,9 @@ const EditProfile = () => {
     zipcode: "",
     spe_name: "",
   });
-  const navigate = useNavigate();
-
   const [specialties, setSpecialties] = useState([]);
+
+  const [statusMessage, setStatusMessage] = useState('');
 
   const fetchAllSpecialties = async () => {
     try {
@@ -32,7 +32,6 @@ const EditProfile = () => {
       console.log(error);
     }
   };
-
 
   // Dummy data (replace with actual data from API)
   useEffect(() => {
@@ -66,7 +65,7 @@ const EditProfile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value)
+    console.log(name, value);
     setFormData((formData) => ({ ...formData, [name]: value }));
   };
 
@@ -85,6 +84,7 @@ const EditProfile = () => {
       );
       if (response.status === 200) {
         // 如果更新成功，导航到员工资料页面
+        setStatusMessage("Profile updated successfully.");
         setProfileData(formData);
       } else {
         throw new Error("Error updating employee data");
@@ -92,14 +92,17 @@ const EditProfile = () => {
       // Optionally, you can update the local state with the new data
       setProfileData(formData);
     } catch (error) {
+      setStatusMessage("Failed to update profile.");
       console.error("Error updating employee data:", error);
     }
   };
 
 
-
   return (
     <Container>
+      {statusMessage && <Alert variant={statusMessage.includes("successfully") ? "success" : "danger"}>
+        {statusMessage}
+      </Alert>}
       <Row>
         <Col md={{ span: 6, offset: 3 }}>
           <h2>Edit Profile</h2>
@@ -131,12 +134,15 @@ const EditProfile = () => {
             <Form.Group controlId="formBiologicalSex">
               <Form.Label>Biological Sex</Form.Label>
               <Form.Control
-                type="text"
+                as="select"
                 name="biological_sex"
                 value={formData.biological_sex}
                 onChange={handleChange}
-                placeholder="Enter biological sex"
-              />
+              >
+                <option value="">Select biological sex</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+              </Form.Control>
             </Form.Group>
 
             {/* Phone Field */}
@@ -175,7 +181,7 @@ const EditProfile = () => {
             </Form.Group>
 
             <Form.Group controlId="formState">
-              <Form.Label>State</Form.Label>
+              <Form.Label>State(2 char)</Form.Label>
               <Form.Control
                 type="text"
                 name="state"
@@ -186,7 +192,7 @@ const EditProfile = () => {
             </Form.Group>
 
             <Form.Group controlId="formZipcode">
-              <Form.Label>Zipcode</Form.Label>
+              <Form.Label>Zipcode(5 number)</Form.Label>
               <Form.Control
                 type="text"
                 name="zipcode"
@@ -215,9 +221,13 @@ const EditProfile = () => {
             </Form.Group>
 
             {/* Submit and Cancel Buttons */}
-            <Button variant="secondary" type="submit" onClick={handleSubmit}>Confirm</Button>
+            <Button variant="secondary" type="submit" onClick={handleSubmit}>
+              Confirm
+            </Button>
             <Link to={`/employee/profile/${username}/${employeeId}`}>
-              <Button variant="secondary" type="button" className="ml-2">Cancel</Button>
+              <Button variant="secondary" type="button" className="ml-2">
+                Back
+              </Button>
             </Link>
           </Form>
         </Col>

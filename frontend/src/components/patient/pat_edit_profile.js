@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import PatientDataService from "../../services/patient";
 
 const EditProfile = () => {
@@ -18,6 +18,9 @@ const EditProfile = () => {
     emergency_name: "",
     emergency_phone: "",
   });
+
+  const [updateMessage, setUpdateMessage] = useState('');
+  const [updateError, setUpdateError] = useState(false);
 
   useEffect(() => {
     fetchPatientData(username);
@@ -42,34 +45,72 @@ const EditProfile = () => {
   const handleConfirm = async () => {
     try {
       const response = await PatientDataService.updatePatient(patientId, formData);
-      console.log("Profile updated successfully:", response.data);
-      setProfileData(response.data);
-      setUpdateSuccess(true);
+      if (response.status === 200) {
+        setUpdateMessage("Profile updated successfully!");
+        setUpdateError(false);
+        setProfileData(response.data);
+      } else {
+        throw new Error("Error updating patient data");
+      }
     } catch (error) {
+      setUpdateMessage("Failed to update profile. Please try again.");
+      setUpdateError(true);
       console.error("Error updating patient data:", error);
     }
   };
 
+  const renderFormControl = (key) => {
+    // process special fields
+    if (key === 'patient_id' || key === 'username') {
+      return null;
+    }
+  
+    // process biological sex selection
+    if (key === 'biological_sex') {
+      return (
+        <Form.Control as="select" name={key} value={formData[key]} onChange={handleChange}>
+          <option value="">Select biological sex</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+        </Form.Control>
+      );
+    }
+  
+    return (
+      <Form.Control
+        type={key.includes("date") ? "date" : "text"}
+        name={key}
+        value={formData[key]}
+        onChange={handleChange}
+        placeholder={`Enter ${key.split("_").join(" ")}`}
+      />
+    );
+  };
+
   return (
     <Container>
+      {/* Message */}
+      {updateMessage && (
+        <Alert variant={updateError ? "danger" : "success"} className="mt-3">
+          {updateMessage}
+        </Alert>
+      )}
       <Row>
         <Col md={{ span: 6, offset: 3 }}>
           <h2 className="text-center mt-4">Edit Profile</h2>
           
           <Form>
-            {/* Form Fields */}
-            {Object.keys(formData).map((key, index) => (
-              <Form.Group controlId={`form${key}`} key={index}>
-                <Form.Label>{key.split("_").join(" ").toUpperCase()}</Form.Label>
-                <Form.Control
-                  type={key.includes("date") ? "date" : "text"}
-                  name={key}
-                  value={formData[key]}
-                  onChange={handleChange}
-                  placeholder={`Enter ${key}`}
-                />
-              </Form.Group>
-            ))}
+          {Object.keys(formData).map((key, index) => {
+            if (key !== 'patient_id' && key !== 'username') {
+              return (
+                <Form.Group controlId={`form${key}`} key={index}>
+                  <Form.Label>{key.split("_").join(" ").toUpperCase()}</Form.Label>
+                  {renderFormControl(key)}
+                </Form.Group>
+              );
+            }
+            return null;
+          })}
 
             {/* Buttons */}
             <div className="text-center">
@@ -84,12 +125,6 @@ const EditProfile = () => {
             </div>
           </Form>
 
-          {/* Success Message */}
-          {updateSuccess && (
-            <div className="alert alert-success mt-3" role="alert">
-              Profile updated successfully!
-            </div>
-          )}
           
         </Col>
       </Row>

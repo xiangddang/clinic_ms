@@ -5,36 +5,36 @@ import PatientDataService from "../../services/patient";
 
 const BookAppointment = ({ show, handleClose, patientId }) => {
   console.log(patientId);
-  // 状态：可用日期数组
+
   const [availableSlots, setAvailableSlots] = useState(null);
-  // 状态：用户选择的日期和时间
+
   const [selectedSlot, setSelectedSlot] = useState(null);
 
   const [bookingMessage, setBookingMessage] = useState({ text: "", type: "" });
 
-  // 在组件挂载时，获取可用日期数据
+  // Fetch available slots when the component mounts
   useEffect(() => {
     fetchAvailableSlots();
   }, []);
 
-  // 从后端获取可用日期数据的函数
+  // get available slots from backend
   const fetchAvailableSlots = async () => {
     try {
-      // 发送请求到后端获取可用日期数据
+      // send request to backend
       const response = await PatientDataService.getAvailableAppointments();
-      // 设置可用日期数组的状态
+      // set available slots
       setAvailableSlots(response.data);
       console.log(availableSlots);
     } catch (error) {
       console.error("Error fetching available slots:", error);
     }
   };
-  // 处理用户选择的日期和时间
+
   const handleSlotSelection = (slot) => {
     setSelectedSlot(slot);
   };
 
-  // 处理用户提交预约的逻辑
+  // handle appointment submit
   const handleAppointmentSubmit = async () => {
     if (selectedSlot && patientId) {
       try {

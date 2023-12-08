@@ -1,8 +1,8 @@
 /* employee_home.css */
 .navbar {
-  padding: 10px; /* 调整导航栏的上下间隙 */
+  padding: 10px; 
   background-color: rgb(185, 185, 185);
-  border-radius: 30px; /* 调整圆角大小 */
+  border-radius: 30px; 
   margin-top: 3%;
   margin-left: 5%;
   margin-right: 5%;
@@ -27,7 +27,7 @@
 }
 
 .nav-link {
-  padding: 10px 10px; /* 调整导航链接的左右间隙 */
+  padding: 10px 10px;
   font-size: 30px;
   margin-left: 2%;
 }
